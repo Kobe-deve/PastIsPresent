@@ -4,6 +4,7 @@ var timerRange;
 		
 var bounce = new Audio("bounce.wav");
 var falling = new Audio("falling_blocks.wav");
+var timeTravel = new Audio("timetravel.wav");
 
 // initialize game 
 function onload()
@@ -780,7 +781,10 @@ function timeSelection(event)
 			timeOption = 0
 			document.onkeydown = inputHandler;	
 			document.onkeyup = inputHandler;	
-		
+			if(toggleEffects)
+			{
+				timeTravel.play();
+			}
 			break;
 			case "ArrowUp":
 			if(timeOption > 0)
