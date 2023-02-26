@@ -48,10 +48,10 @@ brickMap = [[1,1,1,1,1,1,1],
 
 score = 0
 
-x = 100
+paddleX = 100
 paddleWidth = 100
 paddleHeight = 50
-y = screen.height*6/8-paddleHeight
+paddleY = screen.height*6/8-paddleHeight
 paddleVelocity = 0
 
 mouseX = 0
@@ -78,18 +78,18 @@ function inputHandler(event)
 		switch (event.key) 
 		{
 			case "ArrowLeft":
-			if(x > 0)
+			if(paddleX > 0)
 				paddleVelocity = -5
 			else
 			{
-				x = 0
+				paddleX = 0
 				paddleVelocity = 0
 			}
 			break;
 			case "ArrowRight":
-			if(x+paddleWidth > screen.width)
+			if(paddleX+paddleWidth > screen.width)
 			{
-				x = screen.width-paddleWidth
+				paddleX = screen.width-paddleWidth
 				paddleVelocity = 0
 			}
 			else			
@@ -106,7 +106,7 @@ function logicHandling()
 {
 	console.log(ballX + " " + ballY + " " + ballVelocityX + " " + ballVelocityY)
 	
-	x = x + paddleVelocity
+	paddleX = paddleX + paddleVelocity
 	
 	// check if ball is hitting a block 
 	if((ballX-ballRadius-brickMapX)/blockSize >= 0 && (ballX+ballRadius-brickMapX)/blockSize < brickMapWidth && (ballY-ballRadius-brickMapY)/blockSize >= 0 &&(ballY+ballRadius-brickMapY)/blockSize < brickMapHeight )
@@ -130,7 +130,7 @@ function logicHandling()
 	}
 	
 	// check if the ball hits paddle 
-	if((ballX+ballRadius >= x && ballX+ballRadius <= x+paddleWidth) && (ballY+ballRadius >= y && ballY+ballRadius <= y+paddleHeight))
+	if((ballX+ballRadius >= paddleX && ballX+ballRadius <= paddleX+paddleWidth) && (ballY+ballRadius >= paddleY && ballY+ballRadius <= paddleY+paddleHeight))
 	{
 		// check what direction the player is moving
 		if ((ballVelocityX < 0 && paddleVelocity > 0) || (ballVelocityX > 0 && paddleVelocity < 0))
@@ -218,7 +218,7 @@ function draw()
 	
 	// draw player 
 	ctx.beginPath();
-	ctx.rect(x, y, paddleWidth, paddleHeight);
+	ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
 	ctx.stroke();	
 	
 	// display score
