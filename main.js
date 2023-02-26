@@ -77,6 +77,8 @@ ballRadius = 4
 ballVelocityX = 5
 ballVelocityY = 5
 ballStrength = 1
+ballExp = 0
+ballExpMax = 4
 
 // mouse input for paddle
 function paddleInput(event)
@@ -95,6 +97,7 @@ function inputHandler(event)
 			case " ":
 			if(bendingMeter == bendingMeterMax)
 			{
+				au++
 				bendingMeterMax = bendingMeterMax * 2;
  				bendingMeter = 0;
 			}
@@ -136,8 +139,12 @@ function logicHandling()
 		if(brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] > 0)
 		{
 			brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - ballStrength;
-			if(bendingMeter < bendingMeterMax && brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] == 0)
-				bendingMeter++
+			if(brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] <= 0)
+			{
+				if(bendingMeter < bendingMeterMax)
+					bendingMeter++
+				ballExp++
+			}
 			
 			score = score + 1
 			ballVelocityX = -ballVelocityX
@@ -146,8 +153,12 @@ function logicHandling()
 		else if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] > 0)
 		{
 			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] - ballStrength;
-			if(bendingMeter < bendingMeterMax && brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] == 0)
-				bendingMeter++
+			if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] <= 0)
+			{
+				if(bendingMeter < bendingMeterMax)
+					bendingMeter++
+				ballExp++
+			}
 			
 			score = score + 1
 			ballVelocityX = -ballVelocityX
@@ -156,8 +167,12 @@ function logicHandling()
 		else if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] > 0)
 		{
 			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] - ballStrength;
-			if(bendingMeter < bendingMeterMax && brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] == 0)
-				bendingMeter++
+			if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] <= 0)
+			{
+				if(bendingMeter < bendingMeterMax)
+					bendingMeter++
+				ballExp++
+			}
 			
 			score = score + 1
 			ballVelocityX = -ballVelocityX
@@ -166,8 +181,12 @@ function logicHandling()
 		else if(brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] > 0)
 		{
 			brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - ballStrength;
-			if(bendingMeter < bendingMeterMax && brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] == 0)
-				bendingMeter++
+			if(brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] <= 0)
+			{
+				if(bendingMeter < bendingMeterMax)
+					bendingMeter++
+				ballExp++
+			}
 			
 			score = score + 1
 			ballVelocityX = -ballVelocityX
@@ -176,8 +195,12 @@ function logicHandling()
 		else if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] > 0)
 		{
 			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - ballStrength;
-			if(bendingMeter < bendingMeterMax && brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] == 0)
-				bendingMeter++
+			if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] <= 0)
+			{
+				if(bendingMeter < bendingMeterMax)
+					bendingMeter++
+				ballExp++
+			}
 			
 			score = score + 1
 			ballVelocityX = -ballVelocityX
@@ -213,6 +236,14 @@ function logicHandling()
 		ballVelocityY = -ballVelocityY
 		ballY += ballVelocityY
 	}		
+	
+	// ball strength logic 
+	if(ballExp > ballExpMax-1)
+	{
+		ballExp-=ballExpMax
+		ballExpMax= ballExpMax *3
+		ballStrength++
+	}
 	
 	// check if ball hit edge of screen  
 	if(ballX-ballRadius > fieldX && ballX+ballRadius < fieldWidth)
@@ -252,7 +283,7 @@ function drawBlocks()
 	{
 		for(var x = 0;x < brickMapWidth;x++)
 		{
-			if(brickMap[y][x] == 1)
+			if(brickMap[y][x] >= 1)
 				ctx.rect(x*blockSize+brickMapX,y*blockSize+brickMapY, blockSize, blockSize);			
 		}
 	}
@@ -299,7 +330,8 @@ function draw()
 	if(bendingMeter == bendingMeterMax)
 		ctx.strokeText("Press Space to Travel", 200+fieldWidth*6/7, screen.height*1/100+400);
 	
-	ctx.strokeText("Alternate Reality Multiplier: " + au, 200+fieldWidth*6/7, screen.height*1/100+190);
+	ctx.strokeText("Alternate Reality Multiplier: " + au, 200+fieldWidth*6/7, screen.height*1/100+150);
+	ctx.strokeText("EXP: " + ballExp + "/" + ballExpMax, 200+fieldWidth*6/7, screen.height*1/100+190);
 	
 	// draw boundary lines 
 	ctx.beginPath(); 
