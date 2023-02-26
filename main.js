@@ -21,6 +21,8 @@ function onload()
 	
 	ctx.font = "24px serif";
 	ctx.textBaseline = "hanging";
+	
+	setInterval(pushDown,10000)
 }
 
 // resizing window 
@@ -42,23 +44,39 @@ fieldWidth = screen.width/4+screen.width/2
 
 // block placement information
 brickMapWidth = 7;
-brickMapHeight = 4;
+brickMapHeight = 14;
 
 blockSize = 50;
 
 brickMapX = fieldX+10;
 brickMapY = 0;
 
-brickMap = [[1,1,1,1,1,1,1],
+brickMap = [[0,0,0,1,1,1,1],
+		    [1,0,1,1,1,0,1],
+		    [1,0,1,0,0,0,0],
+		    [0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0]];
+
+/*brickMap = [[1,1,1,1,1,1,1],
 		    [1,1,1,1,1,1,1],
 		    [1,1,1,1,1,1,1],
-		    [1,1,1,1,1,1,1]];
+		    [1,1,1,1,1,1,1]];*/
 
 // score counter
 score = 0
 au = 0
 bendingMeter = 0
 bendingMeterMax = 3
+level = 1
 
 // player information
 paddleX = fieldX+100
@@ -72,10 +90,10 @@ mouseY = 0
 
 // ball information
 ballX = fieldX+10
-ballY = 10
+ballY = screen.height/2+10
 ballRadius = 4
-ballVelocityX = 5
-ballVelocityY = 5
+ballVelocityX = 10
+ballVelocityY = 10
 ballStrength = 1
 ballExp = 0
 ballExpMax = 4
@@ -124,6 +142,28 @@ function inputHandler(event)
 	}
 	else if(event.type == 'keyup') 	
 		paddleVelocity = 0
+}
+
+// push blocks downward
+function pushDown()
+{
+	for(var y = brickMapHeight-1;y >= 0;y--)
+	{
+		for(var x = 0;x < brickMapWidth;x++)
+		{
+			if(brickMap[y][x] == 0 && y > 0 && brickMap[y-1][x] > 0)
+			{
+				brickMap[y][x] = brickMap[y-1][x]
+				brickMap[y-1][x] = 0
+			}
+			else if(y == 0 && brickMap[y][x] <= 0)
+			{
+				brickMap[y][x] = 2*level
+			}
+		}
+	}
+	level++
+	setInterval(pushDown,10000/level)
 }
 
 // handles in-game logic 
