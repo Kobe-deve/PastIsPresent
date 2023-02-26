@@ -13,7 +13,8 @@ function onload()
 	// set handlers for inputs
 	document.onkeydown = inputHandler;	
 	document.onkeyup = inputHandler;	
-	document.addEventListener('mousemove', paddleInput);
+	//document.addEventListener('mousemove', paddleInput);
+	//document.addEventListener('mouseover', paddleInput);
 	
 	// set up main loop
 	window.requestAnimationFrame(mainLoop);
@@ -53,28 +54,47 @@ function paddleInput(event)
 
 function inputHandler(event)
 {
-				
+	if(event.type == 'keydown') 
+	{		
+		switch (event.key) 
+		{
+			case "ArrowLeft":
+			paddleVelocity = -5
+			break;
+			case "ArrowRight":
+			paddleVelocity = 5
+			break;	
+		}
+	}
+	else if(event.type == 'keyup') 	
+	{
+		paddleVelocity = 0
+	}
 }
 
 // handles in-game logic 
 function logicHandling()
 {
 	console.log(ballX + " " + ballY + " " + ballVelocityX + " " + ballVelocityY)
+	
 	// paddle physics
-	if(x+paddleWidth/2 < mouseX)
+	/*if(x+paddleWidth/2 < mouseX) // old mouse stuff
 		paddleVelocity = 5
 	else if(x+paddleWidth/2 > mouseY)
 		paddleVelocity = -5
+	else
+		paddleVelocity = 0
+	*/
 	
 	x = x + paddleVelocity//event.clientX-paddleWidth/2
 	
 	if(x > screen.width)
 		x = screen.width-paddleWidth
 
-
 	// check if ball hit paddle 
 	if((ballX-ballRadius >= x && ballX-ballRadius <= x+paddleWidth) && (ballY-ballRadius >= y && ballY-ballRadius <= y+paddleHeight))
 	{
+		//if(ballVelocityX > 0 && paddleVelocity > 0)
 		ballVelocityX = -ballVelocityX
 		ballX += ballVelocityX
 		
