@@ -19,7 +19,7 @@ function onload()
 	// set up main loop
 	window.requestAnimationFrame(mainLoop);
 	
-	ctx.font = "48px serif";
+	ctx.font = "24px serif";
 	ctx.textBaseline = "hanging";
 }
 
@@ -33,9 +33,12 @@ function setWindowSize()
 	canvas.height = window.innerHeight;
 }
 
+// time traveling information
+timeline = []
+
 // play field information
-fieldX = 0
-fieldWidth = screen.width
+fieldX = screen.width/3
+fieldWidth = screen.width/3+500
 
 // block placement information
 brickMapWidth = 7;
@@ -43,7 +46,7 @@ brickMapHeight = 4;
 
 blockSize = 50;
 
-brickMapX = 100;
+brickMapX = fieldX+10;
 brickMapY = 0;
 
 brickMap = [[1,1,1,1,1,1,1],
@@ -57,7 +60,7 @@ bendingMeter = 0
 bendingMeterMax = 3
 
 // player information
-paddleX = 100
+paddleX = fieldX+100
 paddleWidth = 100
 paddleHeight = 50
 paddleY = screen.height*6/8-paddleHeight
@@ -67,11 +70,12 @@ mouseX = 0
 mouseY = 0
 
 // ball information
-ballX = 10
+ballX = fieldX+10
 ballY = 10
 ballRadius = 4
 ballVelocityX = 5
 ballVelocityY = 5
+ballStrength = 1
 
 // mouse input for paddle
 function paddleInput(event)
@@ -87,6 +91,10 @@ function inputHandler(event)
 	{		
 		switch (event.key) 
 		{
+			case " ":
+			if(bendingMeter < bendingMeterMax)
+				bendingMeter++
+			break;
 			case "ArrowLeft":
 			if(paddleX > fieldX)
 				paddleVelocity = -5
@@ -123,35 +131,35 @@ function logicHandling()
 		
 		if(brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] > 0)
 		{
-			brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - 1;
+			brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - ballStrength;
 			score = score + 1
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
 		else if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] > 0)
 		{
-			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] - 1;
+			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] - ballStrength;
 			score = score + 1
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
 		else if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] > 0)
 		{
-			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] - 1;
+			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] - ballStrength;
 			score = score + 1
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
 		else if(brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] > 0)
 		{
-			brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - 1;
+			brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - ballStrength;
 			score = score + 1
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
 		else if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] > 0)
 		{
-			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - 1;
+			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - ballStrength;
 			score = score + 1
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
@@ -201,7 +209,7 @@ function logicHandling()
 		ballX += 2*ballVelocityX
 	}
 	
-	if(ballY-ballRadius > fieldX && ballY+ballRadius < screen.height)
+	if(ballY-ballRadius > 0 && ballY+ballRadius < screen.height)
 		ballY += ballVelocityY
 	else
 	{
@@ -210,7 +218,7 @@ function logicHandling()
 			ballY = screen.height-2*ballVelocityY
 		}
 		else
-			ballY = fieldX+10
+			ballY = 10
 			
 		ballVelocityY = -ballVelocityY
 		ballY += 2*ballVelocityY
@@ -252,7 +260,36 @@ function draw()
 	ctx.stroke();	
 	
 	// display score
-	ctx.strokeText("Score: " + score, fieldWidth*6/7, screen.height*1/100);
+	ctx.strokeText("Score: " + score, 200+fieldWidth*6/7, screen.height*1/100);
+	ctx.strokeText("Strength: " + ballStrength, 200+fieldWidth*6/7, screen.height*1/100+40);
+	
+	// display reality bending meter
+	for(var j=0;j<bendingMeter;j++)
+	{
+		ctx.beginPath();
+		ctx.fillStyle = "#00FF00";
+		ctx.fillRect(200+fieldWidth*6/7+j*40, screen.height*1/20+80, 40, 40);
+		ctx.stroke();	
+	}
+	ctx.beginPath();
+	ctx.rect(200+fieldWidth*6/7, screen.height*1/20+80, screen.height*1/20+(bendingMeterMax-1)*40, 40);
+	ctx.stroke();	
+	ctx.strokeText("Reality Bending:", 200+fieldWidth*6/7, screen.height*1/100+80);
+	
+	if(bendingMeter == bendingMeterMax)
+		ctx.strokeText("Press Space to Travel", 200+fieldWidth*6/7-20, screen.height*1/100+160);
+	
+	// draw boundary lines 
+	ctx.beginPath(); 
+	ctx.moveTo(fieldX, 0); 
+	ctx.lineTo(fieldX, screen.height); 
+	ctx.stroke(); 
+	
+	ctx.beginPath(); 
+	ctx.moveTo(fieldWidth, 0); 
+	ctx.lineTo(fieldWidth, screen.height);
+	ctx.stroke();
+	
 }
 
 // main loop 
