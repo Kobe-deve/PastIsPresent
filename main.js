@@ -1,5 +1,7 @@
 var fallingBlockHandler = null;
 
+var timerRange;
+
 // initialize game 
 function onload()
 {
@@ -22,7 +24,8 @@ function onload()
 	ctx.font = "24px serif";
 	ctx.textBaseline = "hanging";
 	
-	fallingBlockHandler = setInterval(pushDown,10000);
+	timerRange = 10000
+	fallingBlockHandler = setInterval(pushDown,timerRange);
 	start = new Date().getTime();
 	currentTimeline.push(0)
 }
@@ -30,6 +33,8 @@ function onload()
 // restart after game over
 function restartGame()
 {
+	onload();
+	
 	// time traveling information
 	timeline = [] // the option of times to go to 
 	currentTimeline = [] // the current times the player has used 
@@ -191,7 +196,6 @@ function inputHandler(event)
 		switch (event.key) 
 		{
 			case "Backspace":
-			gameOver = true;
 			break;
 			case " ":
 			if(bendingMeter == bendingMeterMax)
@@ -247,9 +251,11 @@ function pushDown()
 			}
 			else if(y == 0 && brickMap[y][x] <= 0)
 			{
-				brickMap[y][x] = 2*level
+				brickMap[y][x] = 2*level;					
+				timerRange = timerRange - 100
+				clearInterval(fallingBlockHandler);
+				fallingBlockHandler = setInterval(pushDown,timerRange);
 			}
-
 		}
 	}
 	level++
@@ -731,6 +737,7 @@ function draw()
 		ctx.fillRect(screen.width/2-100, screen.height/2-100, 300, 200);
 		ctx.stroke();	
 		ctx.strokeText("GAME OVER", screen.width/2, screen.height/2);
+		ctx.strokeText("Press Backspace to restart", screen.width/2, screen.height/2+30);
 	}
 }
 
