@@ -33,6 +33,11 @@ function setWindowSize()
 	canvas.height = window.innerHeight;
 }
 
+// play field information
+fieldX = 0
+fieldWidth = screen.width
+
+// block placement information
 brickMapWidth = 7;
 brickMapHeight = 4;
 
@@ -46,8 +51,12 @@ brickMap = [[1,1,1,1,1,1,1],
 		    [1,1,1,1,1,1,1],
 		    [1,1,1,1,1,1,1]];
 
+// score counter
 score = 0
+bendingMeter = 0
+bendingMeterMax = 3
 
+// player information
 paddleX = 100
 paddleWidth = 100
 paddleHeight = 50
@@ -57,6 +66,7 @@ paddleVelocity = 0
 mouseX = 0
 mouseY = 0
 
+// ball information
 ballX = 10
 ballY = 10
 ballRadius = 4
@@ -78,18 +88,18 @@ function inputHandler(event)
 		switch (event.key) 
 		{
 			case "ArrowLeft":
-			if(paddleX > 0)
+			if(paddleX > fieldX)
 				paddleVelocity = -5
 			else
 			{
-				paddleX = 0
+				paddleX = fieldX
 				paddleVelocity = 0
 			}
 			break;
 			case "ArrowRight":
-			if(paddleX+paddleWidth > screen.width)
+			if(paddleX+paddleWidth > fieldWidth)
 			{
-				paddleX = screen.width-paddleWidth
+				paddleX = fieldWidth-paddleWidth
 				paddleVelocity = 0
 			}
 			else			
@@ -104,8 +114,6 @@ function inputHandler(event)
 // handles in-game logic 
 function logicHandling()
 {
-	console.log(ballX + " " + ballY + " " + ballVelocityX + " " + ballVelocityY)
-	
 	paddleX = paddleX + paddleVelocity
 	
 	// check if ball is hitting a block 
@@ -120,13 +128,35 @@ function logicHandling()
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
-		if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] > 0)
+		else if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] > 0)
 		{
 			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] - 1;
 			score = score + 1
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
+		else if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] > 0)
+		{
+			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX+ballRadius-brickMapX)/blockSize)] - 1;
+			score = score + 1
+			ballVelocityX = -ballVelocityX
+			ballVelocityY = -ballVelocityY
+		}
+		else if(brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] > 0)
+		{
+			brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY+ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - 1;
+			score = score + 1
+			ballVelocityX = -ballVelocityX
+			ballVelocityY = -ballVelocityY
+		}
+		else if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] > 0)
+		{
+			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - 1;
+			score = score + 1
+			ballVelocityX = -ballVelocityX
+			ballVelocityY = -ballVelocityY
+		}
+		
 	}
 	
 	// check if the ball hits paddle 
@@ -158,20 +188,20 @@ function logicHandling()
 	}		
 	
 	// check if ball hit edge of screen  
-	if(ballX-ballRadius > 0 && ballX+ballRadius < screen.width)
+	if(ballX-ballRadius > fieldX && ballX+ballRadius < fieldWidth)
 		ballX += ballVelocityX
 	else
 	{
-		if(ballX+ballRadius >= screen.width)
-			ballX = screen.width-2*ballVelocityX
+		if(ballX+ballRadius >= fieldWidth)
+			ballX = fieldWidth-2*ballVelocityX
 		else 
-			ballX = 10
+			ballX = fieldX+10
 		
 		ballVelocityX = -ballVelocityX
 		ballX += 2*ballVelocityX
 	}
 	
-	if(ballY-ballRadius > 0 && ballY+ballRadius < screen.height)
+	if(ballY-ballRadius > fieldX && ballY+ballRadius < screen.height)
 		ballY += ballVelocityY
 	else
 	{
@@ -180,7 +210,7 @@ function logicHandling()
 			ballY = screen.height-2*ballVelocityY
 		}
 		else
-			ballY = 10
+			ballY = fieldX+10
 			
 		ballVelocityY = -ballVelocityY
 		ballY += 2*ballVelocityY
@@ -222,7 +252,7 @@ function draw()
 	ctx.stroke();	
 	
 	// display score
-	ctx.strokeText("Score: " + score, screen.width*6/7, screen.height*1/100);
+	ctx.strokeText("Score: " + score, fieldWidth*6/7, screen.height*1/100);
 }
 
 // main loop 
