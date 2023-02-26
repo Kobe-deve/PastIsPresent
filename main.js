@@ -33,6 +33,10 @@ x = 100
 paddleWidth = 100
 paddleHeight = 50
 y = screen.height*6/8-paddleHeight
+paddleVelocity = 0
+
+mouseX = 0
+mouseY = 0
 
 ballX = 10
 ballY = 10
@@ -43,12 +47,8 @@ ballVelocityY = 10
 // mouse input for paddle
 function paddleInput(event)
 {
-	//onmousemove = console.log(screen.width + " " + screen.height);
-	
-	x = event.clientX-paddleWidth/2
-	
-	if(x > screen.width)
-		x = screen.width-paddleWidth
+	mouseX = event.clientX
+	mouseY = event.clientY
 }
 
 function inputHandler(event)
@@ -60,12 +60,24 @@ function inputHandler(event)
 function logicHandling()
 {
 	console.log(ballX + " " + ballY + " " + ballVelocityX + " " + ballVelocityY)
+	// paddle physics
+	if(x+paddleWidth/2 < mouseX)
+		paddleVelocity = 5
+	else if(x+paddleWidth/2 > mouseY)
+		paddleVelocity = -5
 	
+	x = x + paddleVelocity//event.clientX-paddleWidth/2
+	
+	if(x > screen.width)
+		x = screen.width-paddleWidth
+
+
 	// check if ball hit paddle 
 	if((ballX-ballRadius >= x && ballX-ballRadius <= x+paddleWidth) && (ballY-ballRadius >= y && ballY-ballRadius <= y+paddleHeight))
 	{
 		ballVelocityX = -ballVelocityX
 		ballX += ballVelocityX
+		
 		ballVelocityY = -ballVelocityY
 		ballY += ballVelocityY
 	}		
