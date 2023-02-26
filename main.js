@@ -93,8 +93,8 @@ paddleVelocity = 0
 ballX = fieldX+10
 ballY = screen.height/2+10
 ballRadius = 4
-ballVelocityX = 10
-ballVelocityY = 10
+ballVelocityX = 2
+ballVelocityY = 2
 ballStrength = 1
 ballExp = 0
 ballExpMax = 4
@@ -188,7 +188,7 @@ function addTimelineEvent()
 {
 	// set up snapshot of information 
 	playerData = [structuredClone(brickMap),[[structuredClone(paddleX), structuredClone(paddleWidth), structuredClone(paddleHeight), structuredClone(paddleY), structuredClone(paddleVelocity)], 
-											[structuredClone(ballX), structuredClone(ballY), structuredClone(ballRadius), structuredClone(ballVelocityX), structuredClone(ballVelocityY)]]];
+											[structuredClone(ballX), structuredClone(ballY), structuredClone(ballRadius+2), structuredClone(ballVelocityX), structuredClone(ballVelocityY)]]];
 	
 	if(timeline.length < 20)
 	{
@@ -232,10 +232,42 @@ function enemyLogic()
 	console.log(pastSelves);
 	for(var j=0;j<pastSelves.length;j++)
 	{
+		// past self paddle logic 
 		pastSelves[j][0][0] = pastSelves[j][0][0] + pastSelves[j][0][4]; // x
 		pastSelves[j][0][3] = screen.height*6/8-paddleHeight-((10+paddleHeight)*j); // y
-		
 		pastSelves[j][0][4] = 0;
+		
+		// past self ball logic  
+		
+		// check if ball hit edge of screen  
+		if(pastSelves[j][1][0]-pastSelves[j][1][2] > fieldX && pastSelves[j][1][0]+pastSelves[j][1][2] < fieldWidth)
+			pastSelves[j][1][0] += pastSelves[j][1][3]
+		else
+		{
+			if(pastSelves[j][1][0]+pastSelves[j][1][2] >= fieldWidth)
+				pastSelves[j][1][0] = fieldWidth-2*pastSelves[j][1][3]
+			else 
+				pastSelves[j][1][0] = fieldX+10
+		
+			pastSelves[j][1][3] = -pastSelves[j][1][3]
+			pastSelves[j][1][0] += 2*pastSelves[j][1][3]
+		}
+	
+		if(pastSelves[j][1][1]-pastSelves[j][1][2] > 0 && pastSelves[j][1][1]+pastSelves[j][1][2] < screen.height)
+			pastSelves[j][1][1] += pastSelves[j][1][4]
+		else
+		{
+			if(pastSelves[j][1][1]+pastSelves[j][1][2] >= screen.height)
+			{
+				pastSelves[j][1][1] = screen.height-2*pastSelves[j][1][4]
+			}
+			else
+				pastSelves[j][1][1] = 10
+			
+			pastSelves[j][1][4] = -pastSelves[j][1][4]
+			pastSelves[j][1][1] += 2*pastSelves[j][1][4]
+		}
+
 	}
 }
 
@@ -246,6 +278,12 @@ function drawEnemies()
     ctx.strokeStyle  = 'red';
 	for(var j=0;j<pastSelves.length;j++)
 	{
+		// draw past self ball 
+		ctx.beginPath();
+		ctx.arc(pastSelves[j][1][0], pastSelves[j][1][1], pastSelves[j][1][2], 0, 2 * Math.PI, false)
+		ctx.stroke();
+	
+		// draw past self paddle 
 		ctx.beginPath();
 		ctx.rect(pastSelves[j][0][0], pastSelves[j][0][3], paddleWidth, paddleHeight);
 		ctx.stroke();	
