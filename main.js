@@ -251,10 +251,13 @@ function pushDown()
 			}
 			else if(y == 0 && brickMap[y][x] <= 0)
 			{
-				brickMap[y][x] = 2*level;					
-				timerRange = timerRange - 100
-				clearInterval(fallingBlockHandler);
-				fallingBlockHandler = setInterval(pushDown,timerRange);
+				brickMap[y][x] = 2*level;		
+				if(timerRange > 2000)		
+				{
+					timerRange = timerRange - 100
+					clearInterval(fallingBlockHandler);
+					fallingBlockHandler = setInterval(pushDown,timerRange);
+				}
 			}
 		}
 	}
