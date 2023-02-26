@@ -14,14 +14,18 @@
 		// canvas context
 		var ctx = null;
 		
+		// toggle sound
 		var toggleEffects = false;
+		
+		// main music
+		var music = new Audio("Live.wav");
 	</script>
 	
 	<!-- Load scripts -->
 	<script type='text/javascript' src='main.js'></script>
 	
 	<!-- HTML to load game -->
-	<body onload='onload()' onClick="toggleEffects=true;">
+	<body onload='onload()' onClick="if(!toggleEffects){music.play(); toggleEffects=true; }">
 		<div>
 			<canvas id="gameCanvas"></canvas>
 		</div>

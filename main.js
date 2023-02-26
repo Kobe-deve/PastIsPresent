@@ -31,7 +31,7 @@ function onload()
 	timerRange = 10000
 	fallingBlockHandler = setInterval(pushDown,timerRange);
 	start = new Date().getTime();
-	currentTimeline.push(0)
+	currentTimeline.push(0);
 }
 
 // restart after game over
