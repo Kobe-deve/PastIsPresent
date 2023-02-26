@@ -23,6 +23,8 @@ function onload()
 	ctx.textBaseline = "hanging";
 	
 	setInterval(pushDown,10000)
+	start = new Date().getTime();
+	currentTimeline.push(0)
 }
 
 // resizing window 
@@ -37,6 +39,7 @@ function setWindowSize()
 
 // time traveling information
 timeline = []
+currentTimeline = []
 
 // play field information
 fieldX = screen.width/4
@@ -80,6 +83,7 @@ paddleHeight = 20
 paddleY = screen.height*6/8-paddleHeight
 paddleVelocity = 0
 
+// mouse coordinates??
 mouseX = 0
 mouseY = 0
 
@@ -92,6 +96,9 @@ ballVelocityY = 10
 ballStrength = 1
 ballExp = 0
 ballExpMax = 4
+
+// used for time
+var start,timerMAth;
 
 // mouse input for paddle
 function paddleInput(event)
@@ -160,6 +167,12 @@ function pushDown()
 	level++
 }
 
+// add to event list when a block is destroyed
+function addTimelineEvent()
+{
+	timeline.push(timerMAth)
+}
+
 // handles in-game logic 
 function logicHandling()
 {
@@ -179,6 +192,7 @@ function logicHandling()
 				if(bendingMeter < bendingMeterMax)
 					bendingMeter++
 				ballExp++
+				addTimelineEvent()
 			}
 			
 			score = score + 1
@@ -193,6 +207,7 @@ function logicHandling()
 				if(bendingMeter < bendingMeterMax)
 					bendingMeter++
 				ballExp++
+				addTimelineEvent()
 			}
 			
 			score = score + 1
@@ -207,6 +222,7 @@ function logicHandling()
 				if(bendingMeter < bendingMeterMax)
 					bendingMeter++
 				ballExp++
+				addTimelineEvent()
 			}
 			
 			score = score + 1
@@ -221,6 +237,7 @@ function logicHandling()
 				if(bendingMeter < bendingMeterMax)
 					bendingMeter++
 				ballExp++
+				addTimelineEvent()
 			}
 			
 			score = score + 1
@@ -235,6 +252,7 @@ function logicHandling()
 				if(bendingMeter < bendingMeterMax)
 					bendingMeter++
 				ballExp++
+				addTimelineEvent()
 			}
 			
 			score = score + 1
@@ -378,6 +396,21 @@ function draw()
 	ctx.moveTo(fieldWidth, 0); 
 	ctx.lineTo(fieldWidth, screen.height);
 	ctx.stroke();
+	
+	timerMAth = (new Date().getTime() - start);
+	
+	// display options for time travel 
+	ctx.strokeText("Times to travel to: ", fieldWidth*1/6, screen.height*1/40);
+	for(z=0;z<timeline.length;z++)
+		ctx.strokeText(Math.floor((timeline[z] % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timeline[z] % (1000 * 60)) / 1000), fieldWidth*1/6, z*20+screen.height*1/20);
+	
+	// show current timeline
+	ctx.strokeText("Your Timeline: ", fieldWidth*1/100, screen.height*1/40);
+	for(z=0;z<currentTimeline.length;z++)
+		ctx.strokeText(Math.floor((currentTimeline[z] % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( currentTimeline[z] % (1000 * 60)) / 1000), fieldWidth*1/100, z*20+screen.height*1/20);
+	
+	// show time
+	ctx.strokeText("Time: " + Math.floor((timerMAth % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timerMAth % (1000 * 60)) / 1000), 200+fieldWidth*6/7, screen.height*1/100+230);
 	
 }
 
