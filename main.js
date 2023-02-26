@@ -273,11 +273,52 @@ function enemyLogic()
 
 // display past selves
 function drawEnemies()
-{
-	
+{	
     ctx.strokeStyle  = 'red';
 	for(var j=0;j<pastSelves.length;j++)
 	{
+		if((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize >= 0 && (pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize < brickMapWidth && (pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize >= 0 &&(pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize < brickMapHeight )
+		{
+			if(brickMap[parseInt((pastSelves[j][1][1]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] > 0)
+			{
+				brickMap[parseInt((pastSelves[j][1][1]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] - ballStrength;
+			
+				pastSelves[j][1][3] = -pastSelves[j][1][3]
+				pastSelves[j][1][4] = -pastSelves[j][1][4]
+			}
+			else if(brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize)] > 0)
+			{
+				brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize)] - ballStrength;
+			
+				pastSelves[j][1][3] = -pastSelves[j][1][3]
+				pastSelves[j][1][4] = -pastSelves[j][1][4]
+			}
+			else if(brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize)] > 0)
+			{
+				brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize)] - ballStrength;
+				
+				pastSelves[j][1][3] = -pastSelves[j][1][3]
+				pastSelves[j][1][4] = -pastSelves[j][1][4]
+			}
+			else if(brickMap[parseInt((pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] > 0)
+			{
+				brickMap[parseInt((pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] - ballStrength;
+			
+				score = score + 1
+				pastSelves[j][1][3] = -pastSelves[j][1][3]
+				pastSelves[j][1][4] = -pastSelves[j][1][4]
+			}
+			else if(brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] > 0)
+			{
+				brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] - ballStrength;
+			
+				score = score + 1
+				pastSelves[j][1][3] = -pastSelves[j][1][3]
+				pastSelves[j][1][4] = -pastSelves[j][1][4]
+			}
+		
+		}
+	
 		// draw past self ball 
 		ctx.beginPath();
 		ctx.arc(pastSelves[j][1][0], pastSelves[j][1][1], pastSelves[j][1][2], 0, 2 * Math.PI, false)
