@@ -15,8 +15,6 @@ function onload()
 	// set handlers for inputs
 	document.onkeydown = inputHandler;	
 	document.onkeyup = inputHandler;	
-	//document.addEventListener('mousemove', paddleInput);
-	//document.addEventListener('mouseover', paddleInput);
 	
 	// set up main loop
 	window.requestAnimationFrame(mainLoop);
@@ -27,6 +25,75 @@ function onload()
 	fallingBlockHandler = setInterval(pushDown,10000);
 	start = new Date().getTime();
 	currentTimeline.push(0)
+}
+
+// restart after game over
+function restartGame()
+{
+	// time traveling information
+	timeline = [] // the option of times to go to 
+	currentTimeline = [] // the current times the player has used 
+	snapShots = [] // player data at times on the timeline 
+
+	// play field information
+	fieldX = screen.width/4
+	fieldWidth = screen.width/4+screen.width/2
+
+	// block placement information
+	brickMapWidth = 14;
+	brickMapHeight = 14;
+
+	blockSize = 50;
+
+	brickMapX = fieldX+(fieldWidth-(fieldX+(blockSize*brickMapWidth)))/2;
+	brickMapY = 0;
+
+	brickMap = [[1,0,1,0,1,0,1,0,1,0,1,0,0,1],
+		    [1,1,0,1,0,1,0,1,0,0,0,1,1,1],
+		    [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		    [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
+
+	// score counter
+	score = 0
+	au = 0
+	bendingMeter = 0
+	bendingMeterMax = 3
+	level = 1
+	gameOver = false;
+
+	// AI information - [[paddleLocation],[ball]]
+	pastSelves = [];
+
+	// player information
+	paddleX = fieldX+100
+	paddleWidth = 100
+	paddleHeight = 20
+	paddleY = screen.height*6/8-paddleHeight
+	paddleVelocity = 0
+
+	// ball information
+	ballX = fieldX+10
+	ballY = screen.height/2+10
+	ballRadius = 4
+	ballVelocityX = 2
+	ballVelocityY = 2
+	ballStrength = 1
+	ballExp = 0
+	ballExpMax = 4
+
+	// used for time
+	timeMode = false;
+	timeOption = 0;
 }
 
 // resizing window 
@@ -124,6 +191,7 @@ function inputHandler(event)
 		switch (event.key) 
 		{
 			case "Backspace":
+			gameOver = true;
 			break;
 			case " ":
 			if(bendingMeter == bendingMeterMax)
@@ -370,11 +438,6 @@ function logicHandling()
 {
 	enemyLogic();
 	
-	if(gameOver)
-	{
-		clearInterval(fallingBlockHandler);
-	}
-	
 	console.log(paddleX+ " " +paddleY)
 	
 	// handles paddle movement from player 
@@ -600,7 +663,7 @@ function draw()
 	drawEnemies();
 	
 	// display score
-	ctx.strokeText("Score: " + score, 200+fieldWidth*6/7, screen.height*1/100);
+	ctx.strokeText("Score: " + score*(au+1), 200+fieldWidth*6/7, screen.height*1/100);
 	ctx.strokeText("Strength: " + ballStrength, 200+fieldWidth*6/7, screen.height*1/100+40);
 	
 	// display reality bending meter
@@ -663,6 +726,10 @@ function draw()
 	// display when game is over 
 	if(gameOver)
 	{
+		ctx.beginPath();
+		ctx.fillStyle = "#0000FF";
+		ctx.fillRect(screen.width/2-100, screen.height/2-100, 300, 200);
+		ctx.stroke();	
 		ctx.strokeText("GAME OVER", screen.width/2, screen.height/2);
 	}
 }
@@ -695,6 +762,20 @@ function timeSelection(event)
 	}
 }
 
+// handling game over 
+function gameOverHandle(event)
+{
+	clearInterval(fallingBlockHandler);
+	
+	if(event.type == 'keydown' && event.key == "Backspace") 
+	{
+		restartGame();
+		document.onkeydown = inputHandler;	
+		document.onkeyup = inputHandler;	
+		gameOver = false;
+	}
+}
+
 // main loop 
 function mainLoop(){
 	
@@ -702,6 +783,11 @@ function mainLoop(){
 	// process player movment/ai/etc 
 	if(!timeMode && !gameOver)
 		logicHandling();
+	else if(gameOver)
+	{
+		document.onkeydown = gameOverHandle;	
+		document.onkeyup = gameOverHandle;	
+	}
 	
 	// display to screen 
 	draw();
