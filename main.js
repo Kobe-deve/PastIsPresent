@@ -271,26 +271,33 @@ function logicHandling()
 	// check if the ball hits paddle 
 	if((ballX+ballRadius >= paddleX && ballX+ballRadius <= paddleX+paddleWidth) && (ballY+ballRadius >= paddleY && ballY+ballRadius <= paddleY+paddleHeight))
 	{
-		// check what direction the player is moving
-		if ((ballVelocityX < 0 && paddleVelocity > 0) || (ballVelocityX > 0 && paddleVelocity < 0))
+		if(ballY+ballRadius <= paddleY)
 		{
-			if(Math.abs(ballVelocityX) == 1)
-				ballVelocityX+=paddleVelocity/2
-			else if(ballVelocityX > 0)
-				ballVelocityX--
-			else if (ballVelocityX < 0)
-				ballVelocityX++
-			
-			ballVelocityX = -ballVelocityX
+			// check what direction the player is moving
+			if ((ballVelocityX < 0 && paddleVelocity > 0) || (ballVelocityX > 0 && paddleVelocity < 0))
+			{
+				if(Math.abs(ballVelocityX) == 1)
+					ballVelocityX+=paddleVelocity/2
+				else if(ballVelocityX > 0)
+					ballVelocityX--
+				else if (ballVelocityX < 0)
+					ballVelocityX++
+				
+				ballVelocityX = -ballVelocityX
+			}
+			else
+			{
+				if(ballVelocityX < 0)
+					ballVelocityX--
+				else
+					ballVelocityX++
+			}
+			ballX += ballVelocityX	
 		}
 		else
 		{
-			if(ballVelocityX < 0)
-				ballVelocityX--
-			else
-				ballVelocityX++
-		}	
-		ballX += ballVelocityX
+			ballVelocityX = -ballVelocityX
+		}
 		
 		ballVelocityY = -ballVelocityY
 		ballY += ballVelocityY
