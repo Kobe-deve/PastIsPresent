@@ -170,7 +170,13 @@ function pushDown()
 // add to event list when a block is destroyed
 function addTimelineEvent()
 {
-	timeline.push(timerMAth)
+	if(timeline.length < 20)
+		timeline.push(timerMAth)
+	else
+	{
+		timeline.shift()
+		timeline.push(timerMAth)
+	}
 }
 
 // handles in-game logic 
