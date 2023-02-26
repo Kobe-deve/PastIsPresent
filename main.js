@@ -43,33 +43,28 @@ fieldX = screen.width/4
 fieldWidth = screen.width/4+screen.width/2
 
 // block placement information
-brickMapWidth = 7;
+brickMapWidth = 14;
 brickMapHeight = 14;
 
 blockSize = 50;
 
-brickMapX = fieldX+10;
+brickMapX = fieldX+(fieldWidth-(fieldX+(blockSize*brickMapWidth)))/2;
 brickMapY = 0;
 
-brickMap = [[0,0,0,1,1,1,1],
-		    [1,0,1,1,1,0,1],
-		    [1,0,1,0,0,0,0],
-		    [0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0]];
-
-/*brickMap = [[1,1,1,1,1,1,1],
-		    [1,1,1,1,1,1,1],
-		    [1,1,1,1,1,1,1],
-		    [1,1,1,1,1,1,1]];*/
+brickMap = [[1,0,1,0,1,0,1,0,1,0,1,0,0,1],
+		    [1,1,0,1,0,1,0,1,0,0,0,1,1,1],
+		    [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+		    [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
 
 // score counter
 score = 0
@@ -163,12 +158,12 @@ function pushDown()
 		}
 	}
 	level++
-	setInterval(pushDown,10000/level)
 }
 
 // handles in-game logic 
 function logicHandling()
 {
+	// handles paddle movement from player 
 	paddleX = paddleX + paddleVelocity
 	
 	// check if ball is hitting a block 
