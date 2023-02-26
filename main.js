@@ -78,6 +78,7 @@ au = 0
 bendingMeter = 0
 bendingMeterMax = 3
 level = 1
+var gameOver = false;
 
 // AI information - [[paddleLocation],[ball]]
 pastSelves = [];
@@ -238,45 +239,15 @@ function enemyLogic()
 		pastSelves[j][0][4] = 0;
 		
 		// past self ball logic  
+		pastSelves[j][1][0]  
+		pastSelves[j][1][1]  
+		pastSelves[j][1][2]
 		
-		// check if ball hit edge of screen  
-		if(pastSelves[j][1][0]-pastSelves[j][1][2] > fieldX && pastSelves[j][1][0]+pastSelves[j][1][2] < fieldWidth)
-			pastSelves[j][1][0] += pastSelves[j][1][3]
-		else
-		{
-			if(pastSelves[j][1][0]+pastSelves[j][1][2] >= fieldWidth)
-				pastSelves[j][1][0] = fieldWidth-2*pastSelves[j][1][3]
-			else 
-				pastSelves[j][1][0] = fieldX+10
+		// check if the ball hits paddle 
+		if((pastSelves[j][1][0]+pastSelves[j][1][2] >= paddleX && pastSelves[j][1][0]+pastSelves[j][1][2] <= paddleX+paddleWidth) && (pastSelves[j][1][1] +pastSelves[j][1][2] >= paddleY && pastSelves[j][1][1] +pastSelves[j][1][2] <= paddleY+paddleHeight))
+			gameOver = true;
 		
-			pastSelves[j][1][3] = -pastSelves[j][1][3]
-			pastSelves[j][1][0] += 2*pastSelves[j][1][3]
-		}
-	
-		if(pastSelves[j][1][1]-pastSelves[j][1][2] > 0 && pastSelves[j][1][1]+pastSelves[j][1][2] < screen.height)
-			pastSelves[j][1][1] += pastSelves[j][1][4]
-		else
-		{
-			if(pastSelves[j][1][1]+pastSelves[j][1][2] >= screen.height)
-			{
-				pastSelves[j][1][1] = screen.height-2*pastSelves[j][1][4]
-			}
-			else
-				pastSelves[j][1][1] = 10
-			
-			pastSelves[j][1][4] = -pastSelves[j][1][4]
-			pastSelves[j][1][1] += 2*pastSelves[j][1][4]
-		}
-
-	}
-}
-
-// display past selves
-function drawEnemies()
-{	
-    ctx.strokeStyle  = 'red';
-	for(var j=0;j<pastSelves.length;j++)
-	{
+		// handle logic with hitting blocks 
 		if((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize >= 0 && (pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize < brickMapWidth && (pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize >= 0 &&(pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize < brickMapHeight )
 		{
 			if(brickMap[parseInt((pastSelves[j][1][1]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] > 0)
@@ -319,6 +290,44 @@ function drawEnemies()
 		
 		}
 	
+		// check if ball hit edge of screen  
+		if(pastSelves[j][1][0]-pastSelves[j][1][2] > fieldX && pastSelves[j][1][0]+pastSelves[j][1][2] < fieldWidth)
+			pastSelves[j][1][0] += pastSelves[j][1][3]
+		else
+		{
+			if(pastSelves[j][1][0]+pastSelves[j][1][2] >= fieldWidth)
+				pastSelves[j][1][0] = fieldWidth-2*pastSelves[j][1][3]
+			else 
+				pastSelves[j][1][0] = fieldX+10
+		
+			pastSelves[j][1][3] = -pastSelves[j][1][3]
+			pastSelves[j][1][0] += 2*pastSelves[j][1][3]
+		}
+	
+		if(pastSelves[j][1][1]-pastSelves[j][1][2] > 0 && pastSelves[j][1][1]+pastSelves[j][1][2] < screen.height)
+			pastSelves[j][1][1] += pastSelves[j][1][4]
+		else
+		{
+			if(pastSelves[j][1][1]+pastSelves[j][1][2] >= screen.height)
+			{
+				pastSelves[j][1][1] = screen.height-2*pastSelves[j][1][4]
+			}
+			else
+				pastSelves[j][1][1] = 10
+			
+			pastSelves[j][1][4] = -pastSelves[j][1][4]
+			pastSelves[j][1][1] += 2*pastSelves[j][1][4]
+		}
+
+	}
+}
+
+// display past selves
+function drawEnemies()
+{	
+    ctx.strokeStyle  = 'red';
+	for(var j=0;j<pastSelves.length;j++)
+	{
 		// draw past self ball 
 		ctx.beginPath();
 		ctx.arc(pastSelves[j][1][0], pastSelves[j][1][1], pastSelves[j][1][2], 0, 2 * Math.PI, false)
@@ -594,6 +603,10 @@ function draw()
 		
 		ctx.strokeText("Press Backspace to select a time", fieldWidth*1/90, screen.height*2/3);
 	}
+	
+	// debug game over thing
+	ctx.strokeText("Gameover: " + gameOver, 200+fieldWidth*6/7, screen.height*1/100+330);
+	
 }
 
 // logic for selecting a time 
