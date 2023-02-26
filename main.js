@@ -79,6 +79,9 @@ bendingMeter = 0
 bendingMeterMax = 3
 level = 1
 
+// AI information - [[paddleLocation],[ball]]
+pastSelves = [];
+
 // player information
 paddleX = fieldX+100
 paddleWidth = 100
@@ -184,7 +187,8 @@ function pushDown()
 function addTimelineEvent()
 {
 	// set up snapshot of information 
-	playerData = [structuredClone(brickMap)]
+	playerData = [structuredClone(brickMap),[[structuredClone(paddleX), structuredClone(paddleWidth), structuredClone(paddleHeight), structuredClone(paddleY), structuredClone(paddleVelocity)], 
+											[structuredClone(ballX), structuredClone(ballY), structuredClone(ballRadius), structuredClone(ballVelocityX), structuredClone(ballVelocityY)]]];
 	
 	if(timeline.length < 20)
 	{
@@ -195,16 +199,71 @@ function addTimelineEvent()
 	{
 		snapShots.shift()
 		timeline.shift()
+		
 		timeline.push(timerMAth)
 		snapShots.push(playerData)
 	}
 }
 
+// setting the environment when the time changes
+function goBack()
+{
+	// set new time 
+	start = new Date().getTime();
+	
+	// change map to snapshot
+	brickMap = snapShots[timeOption][0];
+	
+	// set current timeline to selected time 
+	currentTimeline.push(timeline[timeOption]);
+
+	// set AI to past self coordinates and set current level 
+	pastSelves.push(snapShots[timeOption][1],snapShots[timeOption][2]);	
+	pastSelves.pop();
+	
+	// reallocate the space of the snapshot and timeline stacks 
+	timeline.length = timeOption;
+	snapShots.length = timeOption;
+}
+
+// handles past selves
+function enemyLogic()
+{
+	console.log(pastSelves);
+	for(var j=0;j<pastSelves.length;j++)
+	{
+		pastSelves[j][0][0] = pastSelves[j][0][0] + pastSelves[j][0][4]; // x
+		pastSelves[j][0][3] = screen.height*6/8-paddleHeight-((10+paddleHeight)*j); // y
+		
+		pastSelves[j][0][4] = 0;
+	}
+}
+
+// display past selves
+function drawEnemies()
+{
+	
+    ctx.strokeStyle  = 'red';
+	for(var j=0;j<pastSelves.length;j++)
+	{
+		ctx.beginPath();
+		ctx.rect(pastSelves[j][0][0], pastSelves[j][0][3], paddleWidth, paddleHeight);
+		ctx.stroke();	
+	}
+	
+    ctx.strokeStyle  = 'black';
+}
+
 // handles in-game logic 
 function logicHandling()
 {
+	enemyLogic();
+	
+	console.log(paddleX+ " " +paddleY)
+	
 	// handles paddle movement from player 
-	paddleX = paddleX + paddleVelocity
+	paddleX = paddleX + paddleVelocity;
+	paddleY = screen.height*6/8-paddleHeight-((10+paddleHeight)*pastSelves.length);
 	
 	// check if ball is hitting a block 
 	if((ballX-ballRadius-brickMapX)/blockSize >= 0 && (ballX+ballRadius-brickMapX)/blockSize < brickMapWidth && (ballY-ballRadius-brickMapY)/blockSize >= 0 &&(ballY+ballRadius-brickMapY)/blockSize < brickMapHeight )
@@ -394,6 +453,9 @@ function draw()
 	ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
 	ctx.stroke();	
 	
+	// draw AI/enemies
+	drawEnemies();
+	
 	// display score
 	ctx.strokeText("Score: " + score, 200+fieldWidth*6/7, screen.height*1/100);
 	ctx.strokeText("Strength: " + ballStrength, 200+fieldWidth*6/7, screen.height*1/100+40);
@@ -455,18 +517,6 @@ function draw()
 	}
 }
 
-// setting the environment when the time changes
-function goBack()
-{
-	start = new Date().getTime();
-	brickMap = snapShots[timeOption][0]
-	currentTimeline.push(timeline[timeOption]);
-
-	// reallocate the space of the snapshot and timeline stacks 
-	timeline.length = timeOption;
-	snapShots.length = timeOption;
-}
-
 // logic for selecting a time 
 function timeSelection(event)
 {
@@ -475,7 +525,7 @@ function timeSelection(event)
 		switch (event.key) 
 		{
 			case "Backspace":
-			goBack()
+			goBack();
 			fallingBlockHandler = setInterval(pushDown,10000);
 			timeMode = false
 			timeOption = 0
