@@ -265,6 +265,8 @@ function pushDown()
 			}
 		}
 	}
+	if(toggleEffects)
+		falling.play();
 	level++
 }
 
