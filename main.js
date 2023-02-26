@@ -2,9 +2,9 @@ var fallingBlockHandler = null;
 
 var timerRange;
 		
-var bounce = new Audio("bounce.wav");
-var falling = new Audio("falling_blocks.wav");
-var timeTravel = new Audio("timetravel.wav");
+var bounce = new Audio("sounds/bounce.wav");
+var falling = new Audio("sounds/falling_blocks.wav");
+var timeTravel = new Audio("sounds/timetravel.wav");
 
 // initialize game 
 function onload()
