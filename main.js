@@ -62,7 +62,7 @@ function logicHandling()
 	console.log(ballX + " " + ballY + " " + ballVelocityX + " " + ballVelocityY)
 	
 	// check if ball hit paddle 
-	if((ballX-ballRadius >= x && ballX+ballRadius <= x+paddleWidth) && (ballY-ballRadius >= y && ballY+ballRadius <= x+paddleHeight))
+	if((ballX-ballRadius >= x && ballX-ballRadius <= x+paddleWidth) && (ballY-ballRadius >= y && ballY-ballRadius <= y+paddleHeight))
 	{
 		ballVelocityX = -ballVelocityX
 		ballX += ballVelocityX
