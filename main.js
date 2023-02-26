@@ -174,11 +174,15 @@ function pushDown()
 			{
 				brickMap[y][x] = brickMap[y-1][x]
 				brickMap[y-1][x] = 0
+				
+				if(y == brickMapHeight-1) // if blocks are too far down, set game over status
+					gameOver = true;
 			}
 			else if(y == 0 && brickMap[y][x] <= 0)
 			{
 				brickMap[y][x] = 2*level
 			}
+
 		}
 	}
 	level++
@@ -189,7 +193,7 @@ function addTimelineEvent()
 {
 	// set up snapshot of information 
 	playerData = [structuredClone(brickMap),[[structuredClone(paddleX), structuredClone(paddleWidth), structuredClone(paddleHeight), structuredClone(paddleY), structuredClone(paddleVelocity)], 
-											[structuredClone(ballX), structuredClone(ballY), structuredClone(ballRadius+2), structuredClone(ballVelocityX), structuredClone(ballVelocityY)]]];
+											[structuredClone(ballX), structuredClone(ballY), structuredClone(ballRadius+2), structuredClone(ballVelocityX), structuredClone(ballVelocityY)],structuredClone(pastSelves)]];
 	
 	if(timeline.length < 20)
 	{
@@ -218,8 +222,18 @@ function goBack()
 	// set current timeline to selected time 
 	currentTimeline.push(timeline[timeOption]);
 
-	// set AI to past self coordinates and set current level 
+	// set AI to past self coordinates and set current level 	
 	pastSelves.push(snapShots[timeOption][1],snapShots[timeOption][2]);	
+	
+	// add past AI 
+	for(var l = 0;l<snapShots[timeOption][3];l++)
+	{
+		if(!pastSelves.includes(snapShots[timeOption][3][l]))
+		{
+			pastSelves.push(snapShots[timeOption][3][l]);
+		}
+	}
+	
 	pastSelves.pop();
 	
 	// reallocate the space of the snapshot and timeline stacks 
@@ -241,8 +255,14 @@ function enemyLogic()
 			// past self paddle logic 
 			pastSelves[j][0][0] = pastSelves[j][0][0] + pastSelves[j][0][4]; // x
 			pastSelves[j][0][3] = screen.height*6/8-paddleHeight-((10+paddleHeight)*j); // y
-			pastSelves[j][0][4] = 0;
 			
+			// move paddle
+			if(paddleX < pastSelves[j][0][0])
+				pastSelves[j][0][4] = -2;
+			else if(paddleX > pastSelves[j][0][0])
+				pastSelves[j][0][4] = 2;
+			else
+				pastSelves[j][0][4] = 0
 			// past self ball logic  
 			pastSelves[j][1][0]  
 			pastSelves[j][1][1]  
@@ -352,6 +372,11 @@ function drawEnemies()
 function logicHandling()
 {
 	enemyLogic();
+	
+	if(gameOver)
+	{
+		clearInterval(fallingBlockHandler);
+	}
 	
 	console.log(paddleX+ " " +paddleY)
 	
@@ -625,7 +650,8 @@ function draw()
 		ctx.strokeText(Math.floor((currentTimeline[z] % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( currentTimeline[z] % (1000 * 60)) / 1000), fieldWidth*1/100, z*20+screen.height*1/20);
 	
 	// show time
-	ctx.strokeText("Time: " + Math.floor((timerMAth % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timerMAth % (1000 * 60)) / 1000), 200+fieldWidth*6/7, screen.height*1/100+230);
+	if(!gameOver)
+		ctx.strokeText("Time: " + Math.floor((timerMAth % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timerMAth % (1000 * 60)) / 1000), 200+fieldWidth*6/7, screen.height*1/100+230);
 	
 	// display cursor to select time when time mode is active
 	if(timeMode)
@@ -637,9 +663,11 @@ function draw()
 		ctx.strokeText("Press Backspace to select a time", fieldWidth*1/90, screen.height*2/3);
 	}
 	
-	// debug game over thing
-	ctx.strokeText("Gameover: " + gameOver, 200+fieldWidth*6/7, screen.height*1/100+330);
-	
+	// display when game is over 
+	if(gameOver)
+	{
+		ctx.strokeText("GAME OVER", screen.width/2, screen.height/2);
+	}
 }
 
 // logic for selecting a time 
@@ -675,7 +703,7 @@ function mainLoop(){
 	
 	
 	// process player movment/ai/etc 
-	if(!timeMode)
+	if(!timeMode && !gameOver)
 		logicHandling();
 	
 	// display to screen 
