@@ -18,6 +18,9 @@ function onload()
 	
 	// set up main loop
 	window.requestAnimationFrame(mainLoop);
+	
+	ctx.font = "48px serif";
+	ctx.textBaseline = "hanging";
 }
 
 // resizing window 
@@ -30,6 +33,21 @@ function setWindowSize()
 	canvas.height = window.innerHeight;
 }
 
+brickMapWidth = 7;
+brickMapHeight = 4;
+
+blockSize = 50;
+
+brickMapX = 100;
+brickMapY = 0;
+
+brickMap = [[0,1,0,0,0,0,0],
+		    [0,1,0,0,0,0,0],
+		    [0,1,0,0,0,0,0],
+		    [0,0,0,0,0,0,0]];
+
+score = 0
+
 x = 100
 paddleWidth = 100
 paddleHeight = 50
@@ -41,9 +59,9 @@ mouseY = 0
 
 ballX = 10
 ballY = 10
-ballRadius = 5
-ballVelocityX = 10
-ballVelocityY = 10
+ballRadius = 4
+ballVelocityX = 5
+ballVelocityY = 5
 
 // mouse input for paddle
 function paddleInput(event)
@@ -60,10 +78,22 @@ function inputHandler(event)
 		switch (event.key) 
 		{
 			case "ArrowLeft":
-			paddleVelocity = -5
+			if(x > 0)
+				paddleVelocity = -5
+			else
+			{
+				x = 0
+				paddleVelocity = 0
+			}
 			break;
 			case "ArrowRight":
-			paddleVelocity = 5
+			if(x+paddleWidth > screen.width)
+			{
+				x = screen.width-paddleWidth
+				paddleVelocity = 0
+			}
+			else			
+				paddleVelocity = 5
 			break;	
 		}
 	}
@@ -76,15 +106,6 @@ function logicHandling()
 {
 	console.log(ballX + " " + ballY + " " + ballVelocityX + " " + ballVelocityY)
 	
-	// paddle physics
-	/*if(x+paddleWidth/2 < mouseX) // old mouse stuff
-		paddleVelocity = 5
-	else if(x+paddleWidth/2 > mouseY)
-		paddleVelocity = -5
-	else
-		paddleVelocity = 0
-	*/
-	
 	x = x + paddleVelocity
 	
 	if(x > screen.width)
@@ -93,6 +114,7 @@ function logicHandling()
 	// check if ball hit paddle 
 	if((ballX-ballRadius >= x && ballX-ballRadius <= x+paddleWidth) && (ballY-ballRadius >= y && ballY-ballRadius <= y+paddleHeight))
 	{
+		// check what direction the player is moving
 		if ((ballVelocityX < 0 && paddleVelocity > 0) || (ballVelocityX > 0 && paddleVelocity < 0))
 			ballVelocityX = -ballVelocityX
 		else
@@ -132,13 +154,31 @@ function logicHandling()
 	}
 }
 
+// display blocks
+function drawBlocks()
+{
+	ctx.beginPath();
+	for(var y = 0;y < brickMapHeight;y++)
+	{
+		for(var x = 0;x < brickMapWidth;x++)
+		{
+			if(brickMap[y][x] == 1)
+				ctx.rect(x*blockSize+brickMapX,y*blockSize+brickMapY, blockSize, blockSize);			
+		}
+	}
+	ctx.stroke();
+}
+
 // displaying to the screen 
 function draw()
 {	
 	// clear screen
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	
-	// draw assets
+	// draw blocks
+	drawBlocks();
+	
+	// draw ball 
 	ctx.beginPath();
 	ctx.arc(ballX, ballY, ballRadius, 0, 2 * Math.PI, false)
 	ctx.stroke();	
@@ -147,6 +187,9 @@ function draw()
 	ctx.beginPath();
 	ctx.rect(x, y, paddleWidth, paddleHeight);
 	ctx.stroke();	
+	
+	// display score
+	ctx.strokeText("Score: " + score, screen.width*6/7, screen.height*1/100);
 }
 
 // main loop 
