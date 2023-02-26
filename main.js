@@ -41,10 +41,10 @@ blockSize = 50;
 brickMapX = 100;
 brickMapY = 0;
 
-brickMap = [[0,1,0,0,0,0,0],
-		    [0,1,0,0,0,0,0],
-		    [0,1,0,0,0,0,0],
-		    [0,0,0,0,0,0,0]];
+brickMap = [[1,1,1,1,1,1,1],
+		    [1,1,1,1,1,1,1],
+		    [1,1,1,1,1,1,1],
+		    [1,1,1,1,1,1,1]];
 
 score = 0
 
@@ -108,10 +108,16 @@ function logicHandling()
 	
 	x = x + paddleVelocity
 	
-	if(x > screen.width)
-		x = screen.width-paddleWidth
-
-	// check if ball hit paddle 
+	// check if ball is hitting a block 
+	if((ballX-brickMapX)/blockSize >= 0 && (ballX-brickMapX)/blockSize < brickMapWidth && (ballY-brickMapY)/blockSize >= 0 &&(ballY-brickMapY)/blockSize < brickMapHeight )
+	{
+		console.log((ballX-brickMapX)/blockSize + " " + (ballY-brickMapY)/blockSize)
+	
+		if(brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] == 1)
+			brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = 0;
+	}
+	
+	// check if the ball hits paddle 
 	if((ballX-ballRadius >= x && ballX-ballRadius <= x+paddleWidth) && (ballY-ballRadius >= y && ballY-ballRadius <= y+paddleHeight))
 	{
 		// check what direction the player is moving
