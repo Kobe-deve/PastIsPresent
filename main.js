@@ -232,93 +232,102 @@ function enemyLogic()
 {
 	console.log(pastSelves);
 	for(var j=0;j<pastSelves.length;j++)
-	{
-		// past self paddle logic 
-		pastSelves[j][0][0] = pastSelves[j][0][0] + pastSelves[j][0][4]; // x
-		pastSelves[j][0][3] = screen.height*6/8-paddleHeight-((10+paddleHeight)*j); // y
-		pastSelves[j][0][4] = 0;
-		
-		// past self ball logic  
-		pastSelves[j][1][0]  
-		pastSelves[j][1][1]  
-		pastSelves[j][1][2]
-		
-		// check if the ball hits paddle 
-		if((pastSelves[j][1][0]+pastSelves[j][1][2] >= paddleX && pastSelves[j][1][0]+pastSelves[j][1][2] <= paddleX+paddleWidth) && (pastSelves[j][1][1] +pastSelves[j][1][2] >= paddleY && pastSelves[j][1][1] +pastSelves[j][1][2] <= paddleY+paddleHeight))
-			gameOver = true;
-		
-		// handle logic with hitting blocks 
-		if((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize >= 0 && (pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize < brickMapWidth && (pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize >= 0 &&(pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize < brickMapHeight )
+	{		
+		// check if the player's ball hit the past paddle
+		if((ballX+ballRadius >= pastSelves[j][0][0] && ballX+ballRadius <= pastSelves[j][0][0]+paddleWidth) && (ballY+ballRadius >= pastSelves[j][0][3] && ballY+ballRadius <= pastSelves[j][0][3]+paddleHeight))
 		{
-			if(brickMap[parseInt((pastSelves[j][1][1]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] > 0)
-			{
-				brickMap[parseInt((pastSelves[j][1][1]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] - ballStrength;
+			pastSelves.splice(j,1);
+		}
+		else
+		{
+		
+			// past self paddle logic 
+			pastSelves[j][0][0] = pastSelves[j][0][0] + pastSelves[j][0][4]; // x
+			pastSelves[j][0][3] = screen.height*6/8-paddleHeight-((10+paddleHeight)*j); // y
+			pastSelves[j][0][4] = 0;
 			
-				pastSelves[j][1][3] = -pastSelves[j][1][3]
-				pastSelves[j][1][4] = -pastSelves[j][1][4]
-			}
-			else if(brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize)] > 0)
+			// past self ball logic  
+			pastSelves[j][1][0]  
+			pastSelves[j][1][1]  
+			pastSelves[j][1][2]
+		
+			// check if the ball hits paddle 
+			if((pastSelves[j][1][0]+pastSelves[j][1][2] >= paddleX && pastSelves[j][1][0]+pastSelves[j][1][2] <= paddleX+paddleWidth) && (pastSelves[j][1][1] +pastSelves[j][1][2] >= paddleY && pastSelves[j][1][1] +pastSelves[j][1][2] <= paddleY+paddleHeight))
+				gameOver = true;
+		
+			// handle logic with hitting blocks 
+			if((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize >= 0 && (pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize < brickMapWidth && (pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize >= 0 &&(pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize < brickMapHeight )
 			{
-				brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize)] - ballStrength;
+				if(brickMap[parseInt((pastSelves[j][1][1]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] > 0)
+				{
+					brickMap[parseInt((pastSelves[j][1][1]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] - ballStrength;
 			
-				pastSelves[j][1][3] = -pastSelves[j][1][3]
-				pastSelves[j][1][4] = -pastSelves[j][1][4]
-			}
-			else if(brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize)] > 0)
-			{
-				brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize)] - ballStrength;
+					pastSelves[j][1][3] = -pastSelves[j][1][3]
+					pastSelves[j][1][4] = -pastSelves[j][1][4]
+				}
+				else if(brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize)] > 0)
+				{
+					brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-pastSelves[j][1][2]-brickMapX)/blockSize)] - ballStrength;
+			
+					pastSelves[j][1][3] = -pastSelves[j][1][3]
+					pastSelves[j][1][4] = -pastSelves[j][1][4]
+				}
+				else if(brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize)] > 0)
+				{
+					brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]+pastSelves[j][1][2]-brickMapX)/blockSize)] - ballStrength;
 				
-				pastSelves[j][1][3] = -pastSelves[j][1][3]
-				pastSelves[j][1][4] = -pastSelves[j][1][4]
-			}
-			else if(brickMap[parseInt((pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] > 0)
-			{
-				brickMap[parseInt((pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] - ballStrength;
+					pastSelves[j][1][3] = -pastSelves[j][1][3]
+					pastSelves[j][1][4] = -pastSelves[j][1][4]
+				}
+				else if(brickMap[parseInt((pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] > 0)
+				{
+					brickMap[parseInt((pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]+pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] - ballStrength;
+				
+					score = score + 1
+					pastSelves[j][1][3] = -pastSelves[j][1][3]
+					pastSelves[j][1][4] = -pastSelves[j][1][4]
+				}
+				else if(brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] > 0)
+				{
+					brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] - ballStrength;
 			
-				score = score + 1
-				pastSelves[j][1][3] = -pastSelves[j][1][3]
-				pastSelves[j][1][4] = -pastSelves[j][1][4]
-			}
-			else if(brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] > 0)
-			{
-				brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] = brickMap[parseInt((pastSelves[j][1][1]-pastSelves[j][1][2]-brickMapY)/blockSize)][parseInt((pastSelves[j][1][0]-brickMapX)/blockSize)] - ballStrength;
+					score = score + 1
+					pastSelves[j][1][3] = -pastSelves[j][1][3]
+					pastSelves[j][1][4] = -pastSelves[j][1][4]
+				}
 			
-				score = score + 1
-				pastSelves[j][1][3] = -pastSelves[j][1][3]
-				pastSelves[j][1][4] = -pastSelves[j][1][4]
 			}
-		
-		}
 	
-		// check if ball hit edge of screen  
-		if(pastSelves[j][1][0]-pastSelves[j][1][2] > fieldX && pastSelves[j][1][0]+pastSelves[j][1][2] < fieldWidth)
-			pastSelves[j][1][0] += pastSelves[j][1][3]
-		else
-		{
-			if(pastSelves[j][1][0]+pastSelves[j][1][2] >= fieldWidth)
-				pastSelves[j][1][0] = fieldWidth-2*pastSelves[j][1][3]
-			else 
-				pastSelves[j][1][0] = fieldX+10
-		
-			pastSelves[j][1][3] = -pastSelves[j][1][3]
-			pastSelves[j][1][0] += 2*pastSelves[j][1][3]
-		}
-	
-		if(pastSelves[j][1][1]-pastSelves[j][1][2] > 0 && pastSelves[j][1][1]+pastSelves[j][1][2] < screen.height)
-			pastSelves[j][1][1] += pastSelves[j][1][4]
-		else
-		{
-			if(pastSelves[j][1][1]+pastSelves[j][1][2] >= screen.height)
-			{
-				pastSelves[j][1][1] = screen.height-2*pastSelves[j][1][4]
-			}
+			// check if ball hit edge of screen  
+			if(pastSelves[j][1][0]-pastSelves[j][1][2] > fieldX && pastSelves[j][1][0]+pastSelves[j][1][2] < fieldWidth)
+				pastSelves[j][1][0] += pastSelves[j][1][3]
 			else
-				pastSelves[j][1][1] = 10
+			{
+				if(pastSelves[j][1][0]+pastSelves[j][1][2] >= fieldWidth)
+					pastSelves[j][1][0] = fieldWidth-2*pastSelves[j][1][3]
+				else 
+					pastSelves[j][1][0] = fieldX+10
+		
+				pastSelves[j][1][3] = -pastSelves[j][1][3]
+				pastSelves[j][1][0] += 2*pastSelves[j][1][3]
+			}
+	
+			if(pastSelves[j][1][1]-pastSelves[j][1][2] > 0 && pastSelves[j][1][1]+pastSelves[j][1][2] < screen.height)
+				pastSelves[j][1][1] += pastSelves[j][1][4]
+			else
+			{
+				if(pastSelves[j][1][1]+pastSelves[j][1][2] >= screen.height)
+				{
+					pastSelves[j][1][1] = screen.height-2*pastSelves[j][1][4]
+				}
+				else
+					pastSelves[j][1][1] = 10
 			
-			pastSelves[j][1][4] = -pastSelves[j][1][4]
-			pastSelves[j][1][1] += 2*pastSelves[j][1][4]
+				pastSelves[j][1][4] = -pastSelves[j][1][4]
+				pastSelves[j][1][1] += 2*pastSelves[j][1][4]
+			}
+		
 		}
-
 	}
 }
 
