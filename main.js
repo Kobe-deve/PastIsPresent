@@ -99,6 +99,8 @@ ballExpMax = 4
 
 // used for time
 var start,timerMAth;
+var timeMode = false;
+var timeOption = 0;
 
 // mouse input for paddle
 function paddleInput(event)
@@ -117,6 +119,10 @@ function inputHandler(event)
 			case " ":
 			if(bendingMeter == bendingMeterMax)
 			{
+				document.onkeydown = timeSelection;	
+				document.onkeyup = timeSelection;	
+				timeMode = true
+				timeOption = 0
 				au++
 				bendingMeterMax = bendingMeterMax * 2;
  				bendingMeter = 0;
@@ -425,12 +431,51 @@ function draw()
 	// show time
 	ctx.strokeText("Time: " + Math.floor((timerMAth % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timerMAth % (1000 * 60)) / 1000), 200+fieldWidth*6/7, screen.height*1/100+230);
 	
+	// display cursor to select time when time mode is active
+	if(timeMode)
+	{
+		ctx.beginPath(); 
+		ctx.strokeText(">", fieldWidth*1/6-20, screen.height*1/20+timeOption*20);
+		ctx.stroke();
+		
+		ctx.strokeText("Press Backspace to select a time", fieldWidth*1/90, screen.height*2/3);
+	}
+}
+
+// logic for selecting a time 
+function timeSelection(event)
+{
+	if(event.type == 'keydown') 
+	{
+		switch (event.key) 
+		{
+			case "Backspace":
+		
+			timeMode = false
+			timeOption = 0
+			document.onkeydown = inputHandler;	
+			document.onkeyup = inputHandler;	
+		
+			break;
+			case "ArrowUp":
+			if(timeOption > 0)
+				timeOption--;
+			break;
+			case "ArrowDown":
+			if(timeOption < timeline.length-1)
+				timeOption++
+			break;	
+		}
+	}
 }
 
 // main loop 
 function mainLoop(){
+	
+	
 	// process player movment/ai/etc 
-	logicHandling();
+	if(!timeMode)
+		logicHandling();
 	
 	// display to screen 
 	draw();
