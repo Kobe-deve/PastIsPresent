@@ -52,6 +52,7 @@ function paddleInput(event)
 	mouseY = event.clientY
 }
 
+// paddle input
 function inputHandler(event)
 {
 	if(event.type == 'keydown') 
@@ -67,9 +68,7 @@ function inputHandler(event)
 		}
 	}
 	else if(event.type == 'keyup') 	
-	{
 		paddleVelocity = 0
-	}
 }
 
 // handles in-game logic 
@@ -86,7 +85,7 @@ function logicHandling()
 		paddleVelocity = 0
 	*/
 	
-	x = x + paddleVelocity//event.clientX-paddleWidth/2
+	x = x + paddleVelocity
 	
 	if(x > screen.width)
 		x = screen.width-paddleWidth
@@ -94,8 +93,11 @@ function logicHandling()
 	// check if ball hit paddle 
 	if((ballX-ballRadius >= x && ballX-ballRadius <= x+paddleWidth) && (ballY-ballRadius >= y && ballY-ballRadius <= y+paddleHeight))
 	{
-		//if(ballVelocityX > 0 && paddleVelocity > 0)
-		ballVelocityX = -ballVelocityX
+		if ((ballVelocityX < 0 && paddleVelocity > 0) || (ballVelocityX > 0 && paddleVelocity < 0))
+			ballVelocityX = -ballVelocityX
+		else
+			ballVelocityX = ballVelocityX
+			
 		ballX += ballVelocityX
 		
 		ballVelocityY = -ballVelocityY
