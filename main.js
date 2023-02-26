@@ -124,7 +124,6 @@ function inputHandler(event)
 		switch (event.key) 
 		{
 			case "Backspace":
-			bendingMeter++;
 			break;
 			case " ":
 			if(bendingMeter == bendingMeterMax)
@@ -229,9 +228,7 @@ function goBack()
 	for(var l = 0;l<snapShots[timeOption][3];l++)
 	{
 		if(!pastSelves.includes(snapShots[timeOption][3][l]))
-		{
 			pastSelves.push(snapShots[timeOption][3][l]);
-		}
 	}
 	
 	pastSelves.pop();
@@ -257,9 +254,9 @@ function enemyLogic()
 			pastSelves[j][0][3] = screen.height*6/8-paddleHeight-((10+paddleHeight)*j); // y
 			
 			// move paddle
-			if(paddleX < pastSelves[j][0][0])
+			if(pastSelves[j][1][0] > fieldX && pastSelves[j][1][0] < pastSelves[j][0][0])
 				pastSelves[j][0][4] = -2;
-			else if(paddleX > pastSelves[j][0][0])
+			else if(pastSelves[j][1][0] < fieldWidth && pastSelves[j][1][0] > pastSelves[j][0][0])
 				pastSelves[j][0][4] = 2;
 			else
 				pastSelves[j][0][4] = 0
