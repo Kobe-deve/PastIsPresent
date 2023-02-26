@@ -1,3 +1,5 @@
+var fallingBlockHandler = null;
+
 // initialize game 
 function onload()
 {
@@ -22,7 +24,7 @@ function onload()
 	ctx.font = "24px serif";
 	ctx.textBaseline = "hanging";
 	
-	setInterval(pushDown,10000)
+	fallingBlockHandler = setInterval(pushDown,100000);
 	start = new Date().getTime();
 	currentTimeline.push(0)
 }
@@ -116,9 +118,13 @@ function inputHandler(event)
 	{		
 		switch (event.key) 
 		{
+			case "Backspace":
+			bendingMeter++;
+			break;
 			case " ":
 			if(bendingMeter == bendingMeterMax)
 			{
+				clearInterval(fallingBlockHandler)
 				document.onkeydown = timeSelection;	
 				document.onkeyup = timeSelection;	
 				timeMode = true
@@ -442,6 +448,13 @@ function draw()
 	}
 }
 
+// setting the environment when the time changes
+function goBack()
+{
+	currentTimeline.push(timeline[timeOption]);
+	timeline.length = timeOption;
+}
+
 // logic for selecting a time 
 function timeSelection(event)
 {
@@ -450,7 +463,8 @@ function timeSelection(event)
 		switch (event.key) 
 		{
 			case "Backspace":
-		
+			goBack()
+			fallingBlockHandler = setInterval(pushDown,100000);
 			timeMode = false
 			timeOption = 0
 			document.onkeydown = inputHandler;	
