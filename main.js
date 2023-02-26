@@ -235,12 +235,9 @@ function enemyLogic()
 	{		
 		// check if the player's ball hit the past paddle
 		if((ballX+ballRadius >= pastSelves[j][0][0] && ballX+ballRadius <= pastSelves[j][0][0]+paddleWidth) && (ballY+ballRadius >= pastSelves[j][0][3] && ballY+ballRadius <= pastSelves[j][0][3]+paddleHeight))
-		{
 			pastSelves.splice(j,1);
-		}
 		else
 		{
-		
 			// past self paddle logic 
 			pastSelves[j][0][0] = pastSelves[j][0][0] + pastSelves[j][0][4]; // x
 			pastSelves[j][0][3] = screen.height*6/8-paddleHeight-((10+paddleHeight)*j); // y
@@ -525,7 +522,34 @@ function drawBlocks()
 		for(var x = 0;x < brickMapWidth;x++)
 		{
 			if(brickMap[y][x] >= 1)
-				ctx.rect(x*blockSize+brickMapX,y*blockSize+brickMapY, blockSize, blockSize);			
+			{
+				switch(brickMap[y][x])
+				{
+					case 1:
+					ctx.fillStyle = "#FF0000";
+					break;
+					case 2:
+					ctx.fillStyle = "#0000FF";
+					break;
+					case 3:
+					ctx.fillStyle = "#000FFF";
+					break;
+					case 4:
+					ctx.fillStyle = "#00FFFF";
+					break;
+					case 5:
+					ctx.fillStyle = "#0F00F0";
+					break;
+					case 6:
+					ctx.fillStyle = "#0F0FF0";
+					break;
+					default:
+					case 7:
+					ctx.fillStyle = "#000000";
+					break;
+				}
+				ctx.fillRect(x*blockSize+brickMapX,y*blockSize+brickMapY, blockSize, blockSize);
+			}		
 		}
 	}
 	ctx.stroke();
