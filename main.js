@@ -1,6 +1,9 @@
 var fallingBlockHandler = null;
 
 var timerRange;
+		
+var bounce = new Audio("bounce.wav");
+var falling = new Audio("falling_blocks.wav");
 
 // initialize game 
 function onload()
@@ -193,6 +196,7 @@ function inputHandler(event)
 {
 	if(event.type == 'keydown') 
 	{		
+		toggleEffects = true;
 		switch (event.key) 
 		{
 			case "Backspace":
@@ -468,6 +472,8 @@ function logicHandling()
 			}
 			
 			score = score + 1
+			if(toggleEffects)
+				bounce.play();
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
@@ -483,6 +489,8 @@ function logicHandling()
 			}
 			
 			score = score + 1
+			if(toggleEffects)
+				bounce.play();
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
@@ -498,6 +506,8 @@ function logicHandling()
 			}
 			
 			score = score + 1
+			if(toggleEffects)
+				bounce.play();
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
@@ -513,6 +523,8 @@ function logicHandling()
 			}
 			
 			score = score + 1
+			if(toggleEffects)
+				bounce.play();
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
@@ -528,6 +540,8 @@ function logicHandling()
 			}
 			
 			score = score + 1
+			if(toggleEffects)
+				bounce.play();
 			ballVelocityX = -ballVelocityX
 			ballVelocityY = -ballVelocityY
 		}
@@ -565,6 +579,8 @@ function logicHandling()
 			ballVelocityX = -ballVelocityX
 		}
 		
+		if(toggleEffects)
+			bounce.play();
 		ballVelocityY = -ballVelocityY
 		ballY += ballVelocityY
 	}		
@@ -582,6 +598,8 @@ function logicHandling()
 		ballX += ballVelocityX
 	else
 	{
+		if(toggleEffects)
+			bounce.play();
 		if(ballX+ballRadius >= fieldWidth)
 			ballX = fieldWidth-2*ballVelocityX
 		else 
@@ -595,6 +613,8 @@ function logicHandling()
 		ballY += ballVelocityY
 	else
 	{
+		if(toggleEffects)
+			bounce.play();
 		if(ballY+ballRadius >= screen.height)
 		{
 			ballY = screen.height-2*ballVelocityY

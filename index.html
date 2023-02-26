@@ -14,13 +14,14 @@
 		// canvas context
 		var ctx = null;
 		
+		var toggleEffects = false;
 	</script>
 	
 	<!-- Load scripts -->
 	<script type='text/javascript' src='main.js'></script>
 	
 	<!-- HTML to load game -->
-	<body onload='onload()'>
+	<body onload='onload()' onClick="toggleEffects=true;">
 		<div>
 			<canvas id="gameCanvas"></canvas>
 		</div>
