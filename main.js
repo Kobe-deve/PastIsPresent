@@ -24,7 +24,7 @@ function onload()
 	ctx.font = "24px serif";
 	ctx.textBaseline = "hanging";
 	
-	fallingBlockHandler = setInterval(pushDown,100000);
+	fallingBlockHandler = setInterval(pushDown,10000);
 	start = new Date().getTime();
 	currentTimeline.push(0)
 }
@@ -403,11 +403,11 @@ function draw()
 	{
 		ctx.beginPath();
 		ctx.fillStyle = "#00FF00";
-		ctx.fillRect(200+fieldWidth*6/7+j*20, screen.height*1/20+80, 20, 20);
+		ctx.fillRect(200+fieldWidth*6/7+j*20, screen.height*1/20+80, 20, 10);
 		ctx.stroke();	
 	}
 	ctx.beginPath();
-	ctx.rect(200+fieldWidth*6/7, screen.height*1/20+80, screen.height*1/20+(bendingMeterMax-2)*20, 20);
+	ctx.rect(200+fieldWidth*6/7, screen.height*1/20+80, bendingMeterMax*20, 10);
 	ctx.stroke();	
 	ctx.strokeText("Reality Bending:", 200+fieldWidth*6/7, screen.height*1/100+80);
 	
@@ -461,6 +461,8 @@ function goBack()
 	start = new Date().getTime();
 	brickMap = snapShots[timeOption][0]
 	currentTimeline.push(timeline[timeOption]);
+
+	// reallocate the space of the snapshot and timeline stacks 
 	timeline.length = timeOption;
 	snapShots.length = timeOption;
 }
@@ -474,7 +476,7 @@ function timeSelection(event)
 		{
 			case "Backspace":
 			goBack()
-			fallingBlockHandler = setInterval(pushDown,100000);
+			fallingBlockHandler = setInterval(pushDown,10000);
 			timeMode = false
 			timeOption = 0
 			document.onkeydown = inputHandler;	
