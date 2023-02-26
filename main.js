@@ -109,23 +109,48 @@ function logicHandling()
 	x = x + paddleVelocity
 	
 	// check if ball is hitting a block 
-	if((ballX-brickMapX)/blockSize >= 0 && (ballX-brickMapX)/blockSize < brickMapWidth && (ballY-brickMapY)/blockSize >= 0 &&(ballY-brickMapY)/blockSize < brickMapHeight )
+	if((ballX-ballRadius-brickMapX)/blockSize >= 0 && (ballX+ballRadius-brickMapX)/blockSize < brickMapWidth && (ballY-ballRadius-brickMapY)/blockSize >= 0 &&(ballY+ballRadius-brickMapY)/blockSize < brickMapHeight )
 	{
 		console.log((ballX-brickMapX)/blockSize + " " + (ballY-brickMapY)/blockSize)
-	
-		if(brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] == 1)
-			brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = 0;
+		
+		if(brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] > 0)
+		{
+			brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - 1;
+			score = score + 1
+			ballVelocityX = -ballVelocityX
+			ballVelocityY = -ballVelocityY
+		}
+		if(brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] > 0)
+		{
+			brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] = brickMap[parseInt((ballY-ballRadius-brickMapY)/blockSize)][parseInt((ballX-ballRadius-brickMapX)/blockSize)] - 1;
+			score = score + 1
+			ballVelocityX = -ballVelocityX
+			ballVelocityY = -ballVelocityY
+		}
 	}
 	
 	// check if the ball hits paddle 
-	if((ballX-ballRadius >= x && ballX-ballRadius <= x+paddleWidth) && (ballY-ballRadius >= y && ballY-ballRadius <= y+paddleHeight))
+	if((ballX+ballRadius >= x && ballX+ballRadius <= x+paddleWidth) && (ballY+ballRadius >= y && ballY+ballRadius <= y+paddleHeight))
 	{
 		// check what direction the player is moving
 		if ((ballVelocityX < 0 && paddleVelocity > 0) || (ballVelocityX > 0 && paddleVelocity < 0))
-			ballVelocityX = -ballVelocityX
-		else
-			ballVelocityX = ballVelocityX
+		{
+			if(Math.abs(ballVelocityX) == 1)
+				ballVelocityX+=paddleVelocity/2
+			else if(ballVelocityX > 0)
+				ballVelocityX--
+			else if (ballVelocityX < 0)
+				ballVelocityX++
 			
+			ballVelocityX = -ballVelocityX
+		}
+		else
+		{
+			if(ballVelocityX < 0)
+				ballVelocityX--
+			else
+				ballVelocityX++
+		}	
 		ballX += ballVelocityX
 		
 		ballVelocityY = -ballVelocityY
@@ -138,12 +163,12 @@ function logicHandling()
 	else
 	{
 		if(ballX+ballRadius >= screen.width)
-			ballX = screen.width
-		else
-			ballX = 0
+			ballX = screen.width-2*ballVelocityX
+		else 
+			ballX = 10
 		
 		ballVelocityX = -ballVelocityX
-		ballX += ballVelocityX
+		ballX += 2*ballVelocityX
 	}
 	
 	if(ballY-ballRadius > 0 && ballY+ballRadius < screen.height)
@@ -151,12 +176,14 @@ function logicHandling()
 	else
 	{
 		if(ballY+ballRadius >= screen.height)
-			ballY = screen.height
+		{
+			ballY = screen.height-2*ballVelocityY
+		}
 		else
-			ballY = 0
+			ballY = 10
 			
 		ballVelocityY = -ballVelocityY
-		ballY += ballVelocityY
+		ballY += 2*ballVelocityY
 	}
 }
 
