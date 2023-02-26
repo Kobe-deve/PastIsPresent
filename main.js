@@ -40,8 +40,9 @@ function setWindowSize()
 }
 
 // time traveling information
-timeline = []
-currentTimeline = []
+timeline = [] // the option of times to go to 
+currentTimeline = [] // the current times the player has used 
+snapShots = [] // player data at times on the timeline 
 
 // play field information
 fieldX = screen.width/4
@@ -85,10 +86,6 @@ paddleHeight = 20
 paddleY = screen.height*6/8-paddleHeight
 paddleVelocity = 0
 
-// mouse coordinates??
-mouseX = 0
-mouseY = 0
-
 // ball information
 ballX = fieldX+10
 ballY = screen.height/2+10
@@ -103,6 +100,10 @@ ballExpMax = 4
 var start,timerMAth;
 var timeMode = false;
 var timeOption = 0;
+
+// mouse coordinates??
+mouseX = 0
+mouseY = 0
 
 // mouse input for paddle
 function paddleInput(event)
@@ -182,12 +183,20 @@ function pushDown()
 // add to event list when a block is destroyed
 function addTimelineEvent()
 {
+	// set up snapshot of information 
+	playerData = [structuredClone(brickMap)]
+	
 	if(timeline.length < 20)
-		timeline.push(timerMAth)
-	else
 	{
+		snapShots.push(playerData)
+		timeline.push(timerMAth)
+	}
+	else // shift if stack is full 
+	{
+		snapShots.shift()
 		timeline.shift()
 		timeline.push(timerMAth)
+		snapShots.push(playerData)
 	}
 }
 
@@ -200,8 +209,6 @@ function logicHandling()
 	// check if ball is hitting a block 
 	if((ballX-ballRadius-brickMapX)/blockSize >= 0 && (ballX+ballRadius-brickMapX)/blockSize < brickMapWidth && (ballY-ballRadius-brickMapY)/blockSize >= 0 &&(ballY+ballRadius-brickMapY)/blockSize < brickMapHeight )
 	{
-		console.log((ballX-brickMapX)/blockSize + " " + (ballY-brickMapY)/blockSize)
-		
 		if(brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] > 0)
 		{
 			brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] = brickMap[parseInt((ballY-brickMapY)/blockSize)][parseInt((ballX-brickMapX)/blockSize)] - ballStrength;
@@ -451,8 +458,11 @@ function draw()
 // setting the environment when the time changes
 function goBack()
 {
+	start = new Date().getTime();
+	brickMap = snapShots[timeOption][0]
 	currentTimeline.push(timeline[timeOption]);
 	timeline.length = timeOption;
+	snapShots.length = timeOption;
 }
 
 // logic for selecting a time 
