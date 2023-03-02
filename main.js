@@ -6,6 +6,16 @@ var bounce = new Audio("sounds/bounce.wav");
 var falling = new Audio("sounds/falling_blocks.wav");
 var timeTravel = new Audio("sounds/timetravel.wav");
 
+// play field information
+fieldX = screen.width/4
+fieldWidth = screen.width/4+screen.width/2
+
+// block placement information
+brickMapWidth = 14;
+brickMapHeight = 14;
+
+blockSize = 50;
+
 // initialize game 
 function onload()
 {
@@ -21,23 +31,35 @@ function onload()
 	const el = document.getElementById('gameCanvas');
 	
 	// set handlers for inputs
-	el.onkeydown = inputHandler;	
-	el.onkeyup = inputHandler;	
+	document.onkeydown = inputHandler;	
+	document.onkeyup = inputHandler;	
 	el.addEventListener("touchstart", inputHandler);
 	el.addEventListener("touchmove", inputHandler);
 	el.addEventListener("touchend", inputHandler);
 	el.addEventListener("touchcancel", inputHandler);
-
-	// set up main loop
-	window.requestAnimationFrame(mainLoop);
 	
-	ctx.font = "24px serif";
+	// resize assets based on the specific screen size 
+	if (screen.height > screen.width) // mobile
+	{
+		fieldX = 0;
+		fieldWidth = screen.width;
+		ctx.font = "20px serif";
+		blockSize = screen.width/14;
+	}
+	else
+	{
+		ctx.font = "24px serif";
+	}
 	ctx.textBaseline = "hanging";
-	
+
+	// set up time handling and falling blocks 
 	timerRange = 10000
 	fallingBlockHandler = setInterval(pushDown,timerRange);
 	start = new Date().getTime();
 	currentTimeline.push(0);
+	
+	// set up main loop
+	window.requestAnimationFrame(mainLoop);
 }
 
 // restart after game over
@@ -125,16 +147,6 @@ function setWindowSize()
 timeline = [] // the option of times to go to 
 currentTimeline = [] // the current times the player has used 
 snapShots = [] // player data at times on the timeline 
-
-// play field information
-fieldX = screen.width/4
-fieldWidth = screen.width/4+screen.width/2
-
-// block placement information
-brickMapWidth = 14;
-brickMapHeight = 14;
-
-blockSize = 50;
 
 brickMapX = fieldX+(fieldWidth-(fieldX+(blockSize*brickMapWidth)))/2;
 brickMapY = 0;
