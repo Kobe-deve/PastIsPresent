@@ -16,6 +16,16 @@ brickMapHeight = 14;
 
 blockSize = 50;
 
+// player information
+paddleX = fieldX+100
+paddleWidth = 100
+paddleHeight = 20
+paddleY = screen.height*6/8-paddleHeight
+paddleVelocity = 0
+
+brickMapX = fieldX+(fieldWidth-(fieldX+(blockSize*brickMapWidth)))/2;
+brickMapY = 0;
+
 // initialize game 
 function onload()
 {
@@ -41,15 +51,17 @@ function onload()
 	// resize assets based on the specific screen size 
 	if (screen.height > screen.width) // mobile
 	{
+		brickMapX = 0;
 		fieldX = 0;
 		fieldWidth = screen.width;
 		ctx.font = "20px serif";
+		paddleWidth = 100;
+		paddleHeight = 20;
 		blockSize = screen.width/14;
 	}
 	else
-	{
 		ctx.font = "24px serif";
-	}
+
 	ctx.textBaseline = "hanging";
 
 	// set up time handling and falling blocks 
@@ -148,9 +160,6 @@ timeline = [] // the option of times to go to
 currentTimeline = [] // the current times the player has used 
 snapShots = [] // player data at times on the timeline 
 
-brickMapX = fieldX+(fieldWidth-(fieldX+(blockSize*brickMapWidth)))/2;
-brickMapY = 0;
-
 brickMap = [[1,0,1,0,1,0,1,0,1,0,1,0,0,1],
 		    [1,1,0,1,0,1,0,1,0,0,0,1,1,1],
 		    [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -176,13 +185,6 @@ var gameOver = false;
 
 // AI information - [[paddleLocation],[ball]]
 pastSelves = [];
-
-// player information
-paddleX = fieldX+100
-paddleWidth = 100
-paddleHeight = 20
-paddleY = screen.height*6/8-paddleHeight
-paddleVelocity = 0
 
 // ball information
 ballX = fieldX+10
@@ -726,65 +728,76 @@ function draw()
 	// draw AI/enemies
 	drawEnemies();
 	
-	// display score
-	ctx.strokeText("Score: " + score*(au+1), 200+fieldWidth*6/7, screen.height*1/100);
-	ctx.strokeText("Strength: " + ballStrength, 200+fieldWidth*6/7, screen.height*1/100+40);
-	
-	// display reality bending meter
-	for(var j=0;j<bendingMeter;j++)
+	// display text based on whether the user is on a computer or phone 
+	if (screen.height > screen.width)
 	{
-		ctx.beginPath();
-		ctx.fillStyle = "#00FF00";
-		ctx.fillRect(200+fieldWidth*6/7+j*20, screen.height*1/20+80, 20, 10);
-		ctx.stroke();	
+		/*ctx.beginPath();
+		ctx.fillStyle = "#444444";
+		ctx.fillRect(0,0, screen.width, screen.height/8);
+		ctx.stroke();*/
 	}
-	ctx.beginPath();
-	ctx.rect(200+fieldWidth*6/7, screen.height*1/20+80, bendingMeterMax*20, 10);
-	ctx.stroke();	
-	ctx.strokeText("Reality Bending:", 200+fieldWidth*6/7, screen.height*1/100+80);
-	
-	// show option to travel if meter is full
-	if(bendingMeter == bendingMeterMax)
-		ctx.strokeText("Press Space to Travel", 200+fieldWidth*6/7, screen.height*1/100+400);
-	
-	ctx.strokeText("Alternate Reality Multiplier: " + au, 200+fieldWidth*6/7, screen.height*1/100+150);
-	ctx.strokeText("EXP: " + ballExp + "/" + ballExpMax, 200+fieldWidth*6/7, screen.height*1/100+190);
-	
-	// draw boundary lines 
-	ctx.beginPath(); 
-	ctx.moveTo(fieldX, 0); 
-	ctx.lineTo(fieldX, screen.height); 
-	ctx.stroke(); 
-	
-	ctx.beginPath(); 
-	ctx.moveTo(fieldWidth, 0); 
-	ctx.lineTo(fieldWidth, screen.height);
-	ctx.stroke();
-	
-	timerMAth = (new Date().getTime() - start);
-	
-	// display options for time travel 
-	ctx.strokeText("Times to travel to: ", fieldWidth*1/6, screen.height*1/40);
-	for(z=0;z<timeline.length;z++)
-		ctx.strokeText(Math.floor((timeline[z] % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timeline[z] % (1000 * 60)) / 1000), fieldWidth*1/6, z*20+screen.height*1/20);
-	
-	// show current timeline
-	ctx.strokeText("Your Timeline: ", fieldWidth*1/100, screen.height*1/40);
-	for(z=0;z<currentTimeline.length;z++)
-		ctx.strokeText(Math.floor((currentTimeline[z] % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( currentTimeline[z] % (1000 * 60)) / 1000), fieldWidth*1/100, z*20+screen.height*1/20);
-	
-	// show time
-	if(!gameOver)
-		ctx.strokeText("Time: " + Math.floor((timerMAth % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timerMAth % (1000 * 60)) / 1000), 200+fieldWidth*6/7, screen.height*1/100+230);
-	
-	// display cursor to select time when time mode is active
-	if(timeMode)
+	else
 	{
+		// display score
+		ctx.strokeText("Score: " + score*(au+1), 200+fieldWidth*6/7, screen.height*1/100);
+		ctx.strokeText("Strength: " + ballStrength, 200+fieldWidth*6/7, screen.height*1/100+40);
+	
+		// display reality bending meter
+		for(var j=0;j<bendingMeter;j++)
+		{
+			ctx.beginPath();
+			ctx.fillStyle = "#00FF00";
+			ctx.fillRect(200+fieldWidth*6/7+j*20, screen.height*1/20+80, 20, 10);
+			ctx.stroke();	
+		}
+		ctx.beginPath();
+		ctx.rect(200+fieldWidth*6/7, screen.height*1/20+80, bendingMeterMax*20, 10);
+		ctx.stroke();	
+		ctx.strokeText("Reality Bending:", 200+fieldWidth*6/7, screen.height*1/100+80);
+	
+		// show option to travel if meter is full
+		if(bendingMeter == bendingMeterMax)
+			ctx.strokeText("Press Space to Travel", 200+fieldWidth*6/7, screen.height*1/100+400);
+	
+		ctx.strokeText("Alternate Reality Multiplier: " + au, 200+fieldWidth*6/7, screen.height*1/100+150);
+		ctx.strokeText("EXP: " + ballExp + "/" + ballExpMax, 200+fieldWidth*6/7, screen.height*1/100+190);
+	
+		// draw boundary lines 
 		ctx.beginPath(); 
-		ctx.strokeText(">", fieldWidth*1/6-20, screen.height*1/20+timeOption*20);
+		ctx.moveTo(fieldX, 0); 
+		ctx.lineTo(fieldX, screen.height); 
+		ctx.stroke(); 
+	
+		ctx.beginPath(); 
+		ctx.moveTo(fieldWidth, 0); 
+		ctx.lineTo(fieldWidth, screen.height);
 		ctx.stroke();
-		
-		ctx.strokeText("Press Backspace to select a time", fieldWidth*1/90, screen.height*2/3);
+	
+		timerMAth = (new Date().getTime() - start);
+	
+		// display options for time travel 
+		ctx.strokeText("Times to travel to: ", fieldWidth*1/6, screen.height*1/40);
+		for(z=0;z<timeline.length;z++)
+			ctx.strokeText(Math.floor((timeline[z] % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timeline[z] % (1000 * 60)) / 1000), fieldWidth*1/6, z*20+screen.height*1/20);
+	
+		// show current timeline
+		ctx.strokeText("Your Timeline: ", fieldWidth*1/100, screen.height*1/40);
+		for(z=0;z<currentTimeline.length;z++)
+			ctx.strokeText(Math.floor((currentTimeline[z] % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( currentTimeline[z] % (1000 * 60)) / 1000), fieldWidth*1/100, z*20+screen.height*1/20);
+	
+		// show time
+		if(!gameOver)
+			ctx.strokeText("Time: " + Math.floor((timerMAth % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timerMAth % (1000 * 60)) / 1000), 200+fieldWidth*6/7, screen.height*1/100+230);
+	
+		// display cursor to select time when time mode is active
+		if(timeMode)
+		{
+			ctx.beginPath(); 
+			ctx.strokeText(">", fieldWidth*1/6-20, screen.height*1/20+timeOption*20);
+			ctx.stroke();
+			
+			ctx.strokeText("Press Backspace to select a time", fieldWidth*1/90, screen.height*2/3);
+		}
 	}
 	
 	// display when game is over 
