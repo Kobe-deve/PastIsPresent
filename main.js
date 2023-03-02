@@ -18,13 +18,15 @@ function onload()
 	
 	window.addEventListener("resize",setWindowSize);
 	
+	const el = document.getElementById('gameCanvas');
+	
 	// set handlers for inputs
-	document.onkeydown = inputHandler;	
-	document.onkeyup = inputHandler;	
-	document.addEventListener("touchstart", inputHandler);
-	document.addEventListener("touchmove", inputHandler);
-	document.addEventListener("touchend", inputHandler);
-	document.addEventListener("touchcancel", inputHandler);
+	el.onkeydown = inputHandler;	
+	el.onkeyup = inputHandler;	
+	el.addEventListener("touchstart", inputHandler);
+	el.addEventListener("touchmove", inputHandler);
+	el.addEventListener("touchend", inputHandler);
+	el.addEventListener("touchcancel", inputHandler);
 
 	// set up main loop
 	window.requestAnimationFrame(mainLoop);
@@ -189,26 +191,11 @@ var timeOption = 0;
 mouseX = 0
 mouseY = 0
 
-// mouse input for paddle
-function paddleInput(event)
-{
-	mouseX = event.clientX
-	mouseY = event.clientY
-}
-
-// paddle input for mobile
-function touchInputHandler(e)
-{
-	if (e.touches) {
-		playerX = e.touches[0].pageX;
-		e.preventDefault();
-	}
-}
-
 // paddle input for keyboard
 function inputHandler(event)
 {
-	if(event.type == 'touchstart') // handle mobile devices 
+	event.preventDefault();
+	if(event.touches && event.touches.length > 0) // handle mobile devices 
 	{
 		if(event.touches[0].pageX <= screen.width/2) // move left
 		{
@@ -271,10 +258,8 @@ function inputHandler(event)
 			break;	
 		}
 	}
-	else if(event.type == 'keyup' || event.type == "touchend") 	
+	else if(event.type == 'keyup' || event.touches.length == 0) 	
 		paddleVelocity = 0
-	
-	
 }
 
 // push blocks downward

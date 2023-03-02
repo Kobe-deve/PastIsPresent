@@ -4,7 +4,22 @@
 	<style>
 		body { padding:0; margin:0; height:100%; width:100%; }
 		div { font-family:arial; font-size:16px; font-weight:bold; }
+		canvas {
+			cursor: default;
+			-webkit-user-select:none;
+			-moz-user-select:-moz-none;
+			-ms-user-select:none;user-select:none
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			outline: none;
+			-webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
+		}
+		
 	</style>
+
 	
 	<!-- initialize canvas/context and global variables -->
 	<script>
@@ -26,8 +41,8 @@
 	
 	<!-- HTML to load game -->
 	<body onload='onload()' onClick="if(!toggleEffects){music.play(); music.loop = true; toggleEffects=true; }">
-		<div>
-			<canvas id="gameCanvas"></canvas>
+		<div class="noselect">
+			<canvas id="gameCanvas" ></canvas>
 		</div>
 	</body>
 </html>
