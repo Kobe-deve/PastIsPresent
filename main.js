@@ -54,16 +54,19 @@ function onload()
 		brickMapX = 0;
 		fieldX = 0;
 		fieldWidth = screen.width;
-		ctx.font = "20px serif";
+		ctx.font = "15px serif";
 		paddleWidth = 100;
 		paddleHeight = 20;
-		blockSize = screen.width/14;
+		brickMapHeight = 10;
+		brickMapWidth = 7;
+		blockSize = (screen.width/brickMapWidth);
 	}
 	else
+	{
 		ctx.font = "24px serif";
-
-	ctx.textBaseline = "hanging";
-
+		ctx.textBaseline = "hanging";
+	}
+	
 	// set up time handling and falling blocks 
 	timerRange = 10000
 	fallingBlockHandler = setInterval(pushDown,timerRange);
@@ -731,10 +734,32 @@ function draw()
 	// display text based on whether the user is on a computer or phone 
 	if (screen.height > screen.width)
 	{
-		/*ctx.beginPath();
-		ctx.fillStyle = "#444444";
-		ctx.fillRect(0,0, screen.width, screen.height/8);
-		ctx.stroke();*/
+		
+		// end line for blocks on mobile
+		ctx.beginPath(); 
+		ctx.moveTo(fieldX, blockSize*brickMapHeight-1); 
+		ctx.lineTo(fieldWidth, blockSize*brickMapHeight-1);
+		ctx.stroke();
+	
+		// display reality bending meter
+		for(var j=0;j<bendingMeter;j++)
+		{
+			ctx.beginPath();
+			ctx.fillStyle = "#000000";
+			ctx.fillRect(paddleX+10+j*10, paddleY+10, 10, 5);
+			ctx.stroke();	
+		}
+		
+		// display reality bending bar 
+		ctx.beginPath();
+		ctx.rect(paddleX+10,paddleY+10, bendingMeterMax*10, 5);
+		ctx.stroke();	
+		
+		// show time 
+		timerMAth = (new Date().getTime() - start);
+		if(!gameOver)
+			ctx.strokeText("Time: " + Math.floor((timerMAth % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timerMAth % (1000 * 60)) / 1000), paddleX+10, paddleY+paddleHeight+10);
+	
 	}
 	else
 	{
@@ -753,6 +778,7 @@ function draw()
 		ctx.beginPath();
 		ctx.rect(200+fieldWidth*6/7, screen.height*1/20+80, bendingMeterMax*20, 10);
 		ctx.stroke();	
+		
 		ctx.strokeText("Reality Bending:", 200+fieldWidth*6/7, screen.height*1/100+80);
 	
 		// show option to travel if meter is full
