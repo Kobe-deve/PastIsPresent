@@ -21,7 +21,11 @@ function onload()
 	// set handlers for inputs
 	document.onkeydown = inputHandler;	
 	document.onkeyup = inputHandler;	
-	
+	document.addEventListener("touchstart", inputHandler);
+	document.addEventListener("touchmove", inputHandler);
+	document.addEventListener("touchend", inputHandler);
+	document.addEventListener("touchcancel", inputHandler);
+
 	// set up main loop
 	window.requestAnimationFrame(mainLoop);
 	
@@ -192,10 +196,42 @@ function paddleInput(event)
 	mouseY = event.clientY
 }
 
-// paddle input
+// paddle input for mobile
+function touchInputHandler(e)
+{
+	if (e.touches) {
+		playerX = e.touches[0].pageX;
+		e.preventDefault();
+	}
+}
+
+// paddle input for keyboard
 function inputHandler(event)
 {
-	if(event.type == 'keydown') 
+	if(event.type == 'touchstart') // handle mobile devices 
+	{
+		if(event.touches[0].pageX <= screen.width/2) // move left
+		{
+			if(paddleX > fieldX)
+				paddleVelocity = -5
+			else
+			{
+				paddleX = fieldX
+				paddleVelocity = 0
+			}
+		}
+		else if(event.touches[0].pageX > screen.width/2) // move right
+		{
+			if(paddleX+paddleWidth > fieldWidth)
+			{
+				paddleX = fieldWidth-paddleWidth
+				paddleVelocity = 0
+			}
+			else			
+				paddleVelocity = 5
+		}
+	}
+	else if(event.type == 'keydown')  // handle keyboard
 	{		
 		toggleEffects = true;
 		switch (event.key) 
@@ -235,8 +271,10 @@ function inputHandler(event)
 			break;	
 		}
 	}
-	else if(event.type == 'keyup') 	
+	else if(event.type == 'keyup' || event.type == "touchend") 	
 		paddleVelocity = 0
+	
+	
 }
 
 // push blocks downward
@@ -325,7 +363,6 @@ function goBack()
 // handles past selves
 function enemyLogic()
 {
-	console.log(pastSelves);
 	for(var j=0;j<pastSelves.length;j++)
 	{		
 		// check if the player's ball hit the past paddle
@@ -453,8 +490,6 @@ function drawEnemies()
 function logicHandling()
 {
 	enemyLogic();
-	
-	console.log(paddleX+ " " +paddleY)
 	
 	// handles paddle movement from player 
 	paddleX = paddleX + paddleVelocity;
