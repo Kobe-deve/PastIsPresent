@@ -214,6 +214,13 @@ function inputHandler(event)
 	event.preventDefault();
 	if(event.touches && event.touches.length > 0) // handle mobile devices 
 	{
+		if(!toggleEffects)
+		{
+			 music.play(); 
+			 music.loop = true; 
+			 toggleEffects=true; 
+		}
+		
 		if(event.touches[0].pageX <= screen.width/2) // move left
 		{
 			if(paddleX > fieldX)
