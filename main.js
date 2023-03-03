@@ -243,7 +243,7 @@ function inputHandler(event)
 			else			
 				paddleVelocity = 5
 		}
-		else if(event.touches[0].pageY > blockSize*brickMapHeight-1) // activate time travel 
+		else if(event.touches[0].pageY > blockSize*brickMapHeight-1 && bendingMeter == bendingMeterMax) // activate time travel 
 		{
 			clearInterval(fallingBlockHandler);
 			
