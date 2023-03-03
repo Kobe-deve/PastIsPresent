@@ -63,6 +63,19 @@ function onload()
 	}
 	else
 	{
+		blockSize = 50;
+
+		brickMapX = fieldX+(fieldWidth-(fieldX+(blockSize*brickMapWidth)))/2;
+		brickMapY = 0;
+		
+		// play field information
+		fieldX = screen.width/4
+		fieldWidth = screen.width/4+screen.width/2
+
+		// block placement information
+		brickMapWidth = 14;
+		brickMapHeight = 14;
+	
 		ctx.font = "24px serif";
 		ctx.textBaseline = "hanging";
 	}
@@ -86,19 +99,6 @@ function restartGame()
 	timeline = [] // the option of times to go to 
 	currentTimeline = [] // the current times the player has used 
 	snapShots = [] // player data at times on the timeline 
-
-	// play field information
-	fieldX = screen.width/4
-	fieldWidth = screen.width/4+screen.width/2
-
-	// block placement information
-	brickMapWidth = 14;
-	brickMapHeight = 14;
-
-	blockSize = 50;
-
-	brickMapX = fieldX+(fieldWidth-(fieldX+(blockSize*brickMapWidth)))/2;
-	brickMapY = 0;
 
 	brickMap = [[1,0,1,0,1,0,1,0,1,0,1,0,0,1],
 		    [1,1,0,1,0,1,0,1,0,0,0,1,1,1],
@@ -783,7 +783,7 @@ function draw()
 		}
 	
 		if(bendingMeter == bendingMeterMax && !timeMode)
-			ctx.strokeText("Tap Here to Travel", paddleX-10, paddleY+paddleHeight+50);
+			ctx.strokeText("Tap Below to Travel", paddleX-10, paddleY+paddleHeight-20);
 	
 		// display reality bending bar 
 		ctx.beginPath();
@@ -808,7 +808,7 @@ function draw()
 			if(timeOption < timeline.length-1)
 				ctx.strokeText(">", screen.width/2+50, screen.height/2);
 			
-			ctx.strokeText("Tap Here to Travel Back in Time", paddleX-10, paddleY+paddleHeight+50);
+			ctx.strokeText("Tap Below to Travel Back in Time", paddleX-10, paddleY+paddleHeight-50);
 		}
 		
 	}
@@ -886,9 +886,9 @@ function draw()
 		ctx.stroke();	
 		ctx.strokeText("GAME OVER", screen.width/2, screen.height/2);
 		if (screen.height > screen.width || /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent))
-			ctx.strokeText("Press Backspace to restart", screen.width/2, screen.height/2+30);
-		else
 			ctx.strokeText("Tap to restart", screen.width/2, screen.height/2+30);
+		else
+			ctx.strokeText("Press Backspace to restart", screen.width/2, screen.height/2+30);
 	}
 }
 
@@ -999,7 +999,7 @@ function mainLoop(){
 		el.removeEventListener("touchend", inputHandler);
 		el.removeEventListener("touchcancel", inputHandler);
 			
-		el.addEventListener("touchstart", gameOverHandlev);
+		el.addEventListener("touchstart", gameOverHandle);
 		el.addEventListener("touchmove", gameOverHandle);
 		el.addEventListener("touchend", gameOverHandle);
 		el.addEventListener("touchcancel", gameOverHandle);
