@@ -973,6 +973,12 @@ function gameOverHandle(event)
 	
 	if(event.touches && event.touches.length > 0 || (event.type == 'keydown' && event.key == "Backspace"))
 	{
+		const el = document.getElementById('gameCanvas');
+		el.removeEventListener("touchstart", gameOverHandle);
+		el.removeEventListener("touchmove", gameOverHandle);
+		el.removeEventListener("touchend", gameOverHandle);
+		el.removeEventListener("touchcancel", gameOverHandle);
+		
 		restartGame();
 		document.onkeydown = inputHandler;	
 		document.onkeyup = inputHandler;	
