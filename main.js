@@ -49,7 +49,7 @@ function onload()
 	el.addEventListener("touchcancel", inputHandler);
 	
 	// resize assets based on the specific screen size 
-	if (screen.height > screen.width) // mobile
+	if (screen.height > screen.width || /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent)) // mobile
 	{
 		brickMapX = 0;
 		fieldX = 0;
@@ -151,10 +151,13 @@ function restartGame()
 // resizing window 
 function setWindowSize()
 {
-	restartGame();
-	onload();
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+	if(window.orientation == 0)
+	{
+		restartGame();
+		onload();
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+	}
 }
 
 // time traveling information
@@ -244,11 +247,17 @@ function inputHandler(event)
 		{
 			clearInterval(fallingBlockHandler);
 			
+			// remove input handling from game and start input handling for time travel 
 			const el = document.getElementById('gameCanvas');
-			el.addEventListener("touchstart", inputHandler);
-			el.addEventListener("touchmove", inputHandler);
-			el.addEventListener("touchend", inputHandler);
-			el.addEventListener("touchcancel", inputHandler);
+			el.removeEventListener("touchstart", inputHandler);
+			el.removeEventListener("touchmove", inputHandler);
+			el.removeEventListener("touchend", inputHandler);
+			el.removeEventListener("touchcancel", inputHandler);
+	
+			el.addEventListener("touchstart", timeSelection);
+			el.addEventListener("touchmove", timeSelection);
+			el.addEventListener("touchend", timeSelection);
+			el.addEventListener("touchcancel", timeSelection);
 			document.onkeydown = timeSelection;	
 			document.onkeyup = timeSelection;	
 			timeMode = true
@@ -755,7 +764,7 @@ function draw()
 	drawEnemies();
 	
 	// display text based on whether the user is on a computer or phone 
-	if (screen.height > screen.width)
+	if (screen.height > screen.width || /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent))
 	{
 		
 		// end line for blocks on mobile
@@ -773,10 +782,9 @@ function draw()
 			ctx.stroke();	
 		}
 	
-		if(bendingMeter == bendingMeterMax)
+		if(bendingMeter == bendingMeterMax && !timeMode)
 			ctx.strokeText("Tap Here to Travel", paddleX-10, paddleY+paddleHeight+50);
 	
-		
 		// display reality bending bar 
 		ctx.beginPath();
 		ctx.rect(paddleX+10,paddleY+10, bendingMeterMax*10, 5);
@@ -786,7 +794,23 @@ function draw()
 		timerMAth = (new Date().getTime() - start);
 		if(!gameOver)
 			ctx.strokeText("Time: " + Math.floor((timerMAth % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timerMAth % (1000 * 60)) / 1000), paddleX+10, paddleY+paddleHeight+10);
-	
+		
+		if(timeMode) // display time travel option 
+		{
+			ctx.strokeText("Travel To:", 
+			screen.width/2, screen.height/2-20);
+			ctx.strokeText(Math.floor((timeline[timeOption] % (1000 * 60 * 60)) / (1000*60)) + ":" + Math.floor(( timeline[timeOption] % (1000 * 60)) / 1000), 
+			screen.width/2, screen.height/2);
+			
+			// arrows showing direction 
+			if(timeOption > 0)
+				ctx.strokeText("<", screen.width/2-10, screen.height/2);
+			if(timeOption < timeline.length-1)
+				ctx.strokeText(">", screen.width/2+50, screen.height/2);
+			
+			ctx.strokeText("Tap Here to Travel Back in Time", paddleX-10, paddleY+paddleHeight+50);
+		}
+		
 	}
 	else
 	{
@@ -868,7 +892,51 @@ function draw()
 // logic for selecting a time 
 function timeSelection(event)
 {
-	if(event.type == 'keydown') 
+	event.preventDefault();
+	if(event.touches && event.touches.length > 0) // handle mobile devices 
+	{
+		if(!toggleEffects) // play music if user interacts
+		{
+			 music.play(); 
+			 music.loop = true; 
+			 toggleEffects=true; 
+		}
+		
+		if(event.touches[0].pageY < blockSize*brickMapHeight-1 && event.touches[0].pageX <= screen.width/2) // move left
+		{
+			if(timeOption > 0)
+				timeOption--;
+		}
+		else if(event.touches[0].pageY < blockSize*brickMapHeight-1 && event.touches[0].pageX > screen.width/2) // move right
+		{
+			if(timeOption < timeline.length-1)
+				timeOption++
+		}
+		else if(event.touches[0].pageY > blockSize*brickMapHeight-1) // activate time travel 
+		{
+			const el = document.getElementById('gameCanvas');
+			el.removeEventListener("touchstart", timeSelection);
+			el.removeEventListener("touchmove", timeSelection);
+			el.removeEventListener("touchend", timeSelection);
+			el.removeEventListener("touchcancel", timeSelection);
+	
+			el.addEventListener("touchstart", inputHandler);
+			el.addEventListener("touchmove", inputHandler);
+			el.addEventListener("touchend", inputHandler);
+			el.addEventListener("touchcancel", inputHandler);
+			
+			goBack();
+			fallingBlockHandler = setInterval(pushDown,10000);
+			timeMode = false
+			timeOption = 0
+			document.onkeydown = inputHandler;	
+			document.onkeyup = inputHandler;	
+			if(toggleEffects)
+				timeTravel.play();
+			
+		}
+	}
+	else if(event.type == 'keydown') 
 	{
 		switch (event.key) 
 		{
@@ -880,9 +948,8 @@ function timeSelection(event)
 			document.onkeydown = inputHandler;	
 			document.onkeyup = inputHandler;	
 			if(toggleEffects)
-			{
 				timeTravel.play();
-			}
+			
 			break;
 			case "ArrowUp":
 			if(timeOption > 0)
