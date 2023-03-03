@@ -979,10 +979,7 @@ function gameOverHandle(event)
 		el.removeEventListener("touchend", gameOverHandle);
 		el.removeEventListener("touchcancel", gameOverHandle);
 		
-		restartGame();
-		document.onkeydown = inputHandler;	
-		document.onkeyup = inputHandler;	
-		gameOver = false;
+		location.reload(); 
 	}
 }
 
