@@ -151,9 +151,8 @@ function restartGame()
 // resizing window 
 function setWindowSize()
 {
-	paddleWidth = 100
-	paddleHeight = 100
-	y = screen.height*6/8-paddleHeight
+	restartGame();
+	onload();
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 }
@@ -214,14 +213,14 @@ function inputHandler(event)
 	event.preventDefault();
 	if(event.touches && event.touches.length > 0) // handle mobile devices 
 	{
-		if(!toggleEffects)
+		if(!toggleEffects) // play music if user interacts
 		{
 			 music.play(); 
 			 music.loop = true; 
 			 toggleEffects=true; 
 		}
 		
-		if(event.touches[0].pageX <= screen.width/2) // move left
+		if(event.touches[0].pageY < blockSize*brickMapHeight-1 && event.touches[0].pageX <= screen.width/2) // move left
 		{
 			if(paddleX > fieldX)
 				paddleVelocity = -5
@@ -231,7 +230,7 @@ function inputHandler(event)
 				paddleVelocity = 0
 			}
 		}
-		else if(event.touches[0].pageX > screen.width/2) // move right
+		else if(event.touches[0].pageY < blockSize*brickMapHeight-1 && event.touches[0].pageX > screen.width/2) // move right
 		{
 			if(paddleX+paddleWidth > fieldWidth)
 			{
@@ -240,6 +239,23 @@ function inputHandler(event)
 			}
 			else			
 				paddleVelocity = 5
+		}
+		else if(event.touches[0].pageY > blockSize*brickMapHeight-1) // activate time travel 
+		{
+			clearInterval(fallingBlockHandler);
+			
+			const el = document.getElementById('gameCanvas');
+			el.addEventListener("touchstart", inputHandler);
+			el.addEventListener("touchmove", inputHandler);
+			el.addEventListener("touchend", inputHandler);
+			el.addEventListener("touchcancel", inputHandler);
+			document.onkeydown = timeSelection;	
+			document.onkeyup = timeSelection;	
+			timeMode = true
+			timeOption = 0
+			au++
+			bendingMeterMax = bendingMeterMax * 2;
+ 			bendingMeter = 0;
 		}
 	}
 	else if(event.type == 'keydown')  // handle keyboard
@@ -756,6 +772,10 @@ function draw()
 			ctx.fillRect(paddleX+10+j*10, paddleY+10, 10, 5);
 			ctx.stroke();	
 		}
+	
+		if(bendingMeter == bendingMeterMax)
+			ctx.strokeText("Tap Here to Travel", paddleX-10, paddleY+paddleHeight+50);
+	
 		
 		// display reality bending bar 
 		ctx.beginPath();
