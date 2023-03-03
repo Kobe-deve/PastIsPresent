@@ -885,7 +885,10 @@ function draw()
 		ctx.fillRect(screen.width/2-100, screen.height/2-100, 300, 200);
 		ctx.stroke();	
 		ctx.strokeText("GAME OVER", screen.width/2, screen.height/2);
-		ctx.strokeText("Press Backspace to restart", screen.width/2, screen.height/2+30);
+		if (screen.height > screen.width || /Android|webOS|iPhone|iPad|iPod|Opera Mini/i.test(navigator.userAgent))
+			ctx.strokeText("Press Backspace to restart", screen.width/2, screen.height/2+30);
+		else
+			ctx.strokeText("Tap to restart", screen.width/2, screen.height/2+30);
 	}
 }
 
@@ -968,7 +971,7 @@ function gameOverHandle(event)
 {
 	clearInterval(fallingBlockHandler);
 	
-	if(event.type == 'keydown' && event.key == "Backspace") 
+	if(event.touches && event.touches.length > 0 || (event.type == 'keydown' && event.key == "Backspace"))
 	{
 		restartGame();
 		document.onkeydown = inputHandler;	
@@ -988,6 +991,18 @@ function mainLoop(){
 	{
 		document.onkeydown = gameOverHandle;	
 		document.onkeyup = gameOverHandle;	
+		
+		// add mobile input 
+		const el = document.getElementById('gameCanvas');
+		el.removeEventListener("touchstart", inputHandler);
+		el.removeEventListener("touchmove", inputHandler);
+		el.removeEventListener("touchend", inputHandler);
+		el.removeEventListener("touchcancel", inputHandler);
+			
+		el.addEventListener("touchstart", gameOverHandlev);
+		el.addEventListener("touchmove", gameOverHandle);
+		el.addEventListener("touchend", gameOverHandle);
+		el.addEventListener("touchcancel", gameOverHandle);
 	}
 	
 	// display to screen 
